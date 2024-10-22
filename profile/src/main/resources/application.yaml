@@ -1,0 +1,30 @@
+server:
+  port: 8086
+
+spring:
+  application:
+    name: profile
+
+keycloak:
+  realm.name: E-GROCERY
+  server-url: http://localhost:8090
+  admin-username: admin
+  admin-password: admin
+
+management:
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+
+      group.readiness.include: '*'
+      group.readiness.show-details: always
+
+      group.liveness.include: '*'
+      group.liveness.show-details: always
+
+  endpoints:
+    web:
+      exposure:
+        include: '*'

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <link rel="shortcut icon" type="image/png" th:href="@{/img/logo.png}"/>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Profile</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;600;900&display=swap" rel="stylesheet">
+    <!--JQuery-->
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+
+    <!--Vue & axios-->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/axios/0.17.1/axios.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/js/toastr.js"></script>
+
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+
+    <!-- Css Styles -->
+    <link rel="stylesheet" href="css/lib/bootstrap.min.css" type="text/css">
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/lib/elegant-icons.css" type="text/css">
+    <link rel="stylesheet" href="css/lib/nice-select.css" type="text/css">
+    <link rel="stylesheet" href="css/lib/owl.carousel.min.css" type="text/css">
+    <link rel="stylesheet" href="css/lib/slicknav.min.css" type="text/css">
+    <link rel="stylesheet" href="css/lib/style.css" type="text/css">
+    <link rel="stylesheet" th:href="@{/css/profile.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/css/toastr.css" rel="stylesheet"/>
+
+</head>
+
+<body>
+
+<div class="container-fluid" v-cloak id="app">
+
+    <div class="row justify-content-center">
+        <div class="col-6">
+
+            <div class="card hovercard">
+                <a href="/product-catalogue"><b><u>Back to Catalogue</u></b></a>
+                <a href="/logout"><b><u>Logout</u></b></a>
+
+                <div class="cardheader">
+
+                </div>
+                <div class="avatar">
+                    <img src="../img/avatar-placeholder.png">
+                </div>
+                <div class="info text-center" v-if="user !== null && user !== undefined">
+                    <div class="title">
+                        Edit profile
+                    </div>
+                    <label for="enabled">Enabled</label>
+                    <input class="form-control form-control" type="text" disabled :placeholder="user.enabled" id="enabled"/>
+                    <br/>
+                    <label for="firstName">First name</label>
+                    <input class="form-control form-control" type="text" v-model="user.firstName" id="firstName"/>
+                    <span v-if="firstNameError !== null" class="error-text">{{ firstNameError }}</span>
+                    <br/>
+                    <label for="lastName">Last name</label>
+                    <input class="form-control form-control" type="text" v-model="user.lastName" id="lastName"/>
+                    <span v-if="lastNameError !== null" class="error-text">{{ lastNameError }}</span>
+                    <br/>
+                    <label for="email">E-mail</label>
+                    <input class="form-control form-control" type="text" v-model="user.email" id="email"/>
+                    <span v-if="emailError !== null" class="error-text">{{ emailError }}</span>
+
+                </div>
+                <div class="btn-group">
+                    <button type="submit" value="submit" class="btn btn-success" @click="changeUserProfile">Change</button>
+                    <button type="button" class="btn btn-dark" @click="loadUserProfile">Cancel</button>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+</body>
+<script type="module" th:src="@{/js/profile.js}"></script>
+</html>

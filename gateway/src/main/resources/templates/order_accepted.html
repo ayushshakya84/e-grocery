@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <link rel="shortcut icon" type="image/png" th:href="@{/img/logo.png}"/>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Thanks</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;600;900&display=swap" rel="stylesheet">
+    <!--JQuery-->
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+
+    <!--Vue & axios-->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/axios/0.17.1/axios.js"></script>
+
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/js/toastr.js"></script>
+
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- Css Styles -->
+    <link rel="stylesheet" href="css/lib/bootstrap.min.css" type="text/css">
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/lib/elegant-icons.css" type="text/css">
+    <link rel="stylesheet" href="css/lib/nice-select.css" type="text/css">
+    <link rel="stylesheet" href="css/lib/owl.carousel.min.css" type="text/css">
+    <link rel="stylesheet" href="css/lib/slicknav.min.css" type="text/css">
+    <link rel="stylesheet" href="css/lib/style.css" type="text/css">
+    <link rel="stylesheet" th:href="@{/css/order_accepted.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/css/toastr.css" rel="stylesheet"/>
+
+</head>
+
+<body>
+<div class="container-fluid" v-cloak id="app">
+    <div class="row justify-content-center">
+        <div class="col-6">
+            <div class="card hovercard">
+                <div class="cardheader"></div>
+                    <div class="info text-center">
+                        <h2>Thanks for your order</h2>
+                        <span class="theme-color">Payment Summary</span>
+                        <div class="mb-3">
+                            <hr class="new1">
+                        </div>
+                        <div>
+                            <span v-if="order !== null" class="font-weight-bold">
+                                Total: {{ order.totalPrice }}$
+                            </span>
+                        </div>
+                        <div class="text-center mt-5">
+                            <a class="site-btn pointer" @click="onCatalogueClick">
+                                Back to catalogue  <i class="fa fa-shopping-cart"></i>
+                            </a>
+                            <a class="site-btn pointer" @click="onOrderClick">
+                                Track your order  <i class="fa fa-list-ul"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" th:src="@{/js/order_accepted.js}"></script>
+
+</html>

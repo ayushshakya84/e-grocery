@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}
+  labels:
+    app: profile
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: profile
+  template:
+    metadata:
+      annotations:
+        app: profile
+      labels:
+        app: profile
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          env:
+            - name: keycloak.realm.name
+              valueFrom:
+                secretKeyRef:
+                  name: {{ printf "%s-%s" .Chart.Name "secret" }}
+                  key: KEYCLOAK_REALM_NAME
+            - name: keycloak.admin-username
+              valueFrom:
+                secretKeyRef:
+                  name: {{ printf "%s-%s" .Chart.Name "secret" }}
+                  key: KEYCLOAK_ADMIN_USERNAME
+            - name: keycloak.admin-password
+              valueFrom:
+                secretKeyRef:
+                  name: {{ printf "%s-%s" .Chart.Name "secret" }}
+                  key: KEYCLOAK_ADMIN_PASSWORD
+            - name: keycloak.server-url
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ printf "%s-%s" .Chart.Name "config" }}
+                  key: KEYCLOACK_SERVER_URL
+          ports:
+            - name: web
+              containerPort: 8086
+              protocol: TCP
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /actuator/health/liveness
+              port: web
+              scheme: HTTP
+            initialDelaySeconds: 60
+            periodSeconds: 60
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /actuator/health/readiness
+              port: web
+              scheme: HTTP
+            initialDelaySeconds: 60
+            periodSeconds: 60

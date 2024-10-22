@@ -1,0 +1,43 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: product
+  jpa:
+    open-in-view: false
+    properties.hibernate:
+      show_sql: false
+      format_sql: false
+      jdbc.time_zone: UTC
+  liquibase:
+    enabled: true
+    contexts: dev
+  datasource:
+    url: jdbc:tc:postgresql:10.9://localhost/test
+    username: test
+    password: test
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+    name: main
+
+management:
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+
+      group.readiness.include: '*'
+      group.readiness.show-details: always
+
+      group.liveness.include: '*'
+      group.liveness.show-details: always
+
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+logging:
+  level:
+    io.swagger.models.parameters.AbstractSerializableParameter: ERROR

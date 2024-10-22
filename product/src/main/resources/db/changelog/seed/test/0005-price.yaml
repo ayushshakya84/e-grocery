@@ -1,0 +1,16 @@
+databaseChangeLog:
+- changeSet:
+    id: 0005-price
+    author: voleshko
+    context: dev
+    runAlways: true
+    runOnChange: true
+    loadUpdateData:
+      primaryKey: id
+      file: data/price.csv
+      relativeToChangelogFile: true
+      separator: ;
+      quotChar: '"'
+      seperator: ';'
+      encoding: UTF-8
+      tableName: price

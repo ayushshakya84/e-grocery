@@ -1,0 +1,31 @@
+[v-cloak] {
+    display: none;
+}
+
+.cart {
+    background: linear-gradient(lightgray, white);
+    padding: 5px;
+}
+
+.image {
+    max-width: 100px;
+    max-height: 100px;
+}
+
+.card {
+    border: solid #070707;
+    padding-top: 20px;
+    margin: 10px 0 20px 0;
+    border-bottom-width: 2px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.btn{ margin: 3px; }

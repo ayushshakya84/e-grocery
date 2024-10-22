@@ -1,0 +1,14 @@
+databaseChangeLog:
+
+- include:
+    file: db/changelog/seed/test/0001-attribute.yaml
+- include:
+    file: db/changelog/seed/test/0002-category.yaml
+- include:
+    file: db/changelog/seed/test/0003-category-attribute.yaml
+- include:
+    file: db/changelog/seed/test/0004-product.yaml
+- include:
+    file: db/changelog/seed/test/0005-price.yaml
+- include:
+    file: db/changelog/seed/test/0006-category-product.yaml

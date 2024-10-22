@@ -1,0 +1,20 @@
+{{- if .Values.metrics.serviceMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ printf "%s-%s" .Chart.Name "servicemonitor" }}
+  labels:
+    app: search
+spec:
+  jobLabel: {{ printf "%s-%s" .Chart.Name "servicemonitor" }}
+  namespaceSelector:
+    matchNames:
+    - "{{ $.Release.Namespace }}"
+  selector:
+    matchLabels:
+      app: search
+  endpoints:
+    - interval: 15s
+      port: search-port
+      path: /actuator/prometheus
+{{- end }}

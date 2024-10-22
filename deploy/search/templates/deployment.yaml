@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}
+  labels:
+    app: search
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: search
+  template:
+    metadata:
+      annotations:
+        app: search
+      labels:
+        app: search
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          env:
+            - name: elastic.host
+              value: search-elasticsearch-master
+            - name: s3.url
+              value: http://s3.default.svc.cluster.local:4566
+            - name: spring.rabbitmq.port
+              value: "5672"
+            - name: spring.rabbitmq.host
+              value: "rabbitmq"
+          ports:
+            - name: web
+              containerPort: 8087
+              protocol: TCP
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /actuator/health/liveness
+              port: web
+              scheme: HTTP
+            initialDelaySeconds: 90
+            periodSeconds: 60
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /actuator/health/readiness
+              port: web
+              scheme: HTTP
+            initialDelaySeconds: 80
+            periodSeconds: 60

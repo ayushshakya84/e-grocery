@@ -1,0 +1,16 @@
+replicaCount: 1
+
+image:
+  repository: vyacheslavoleshko
+  pullPolicy: IfNotPresent
+
+postgresql:
+  postgresqlUsername: postgres
+  postgresqlPassword: secretpass
+  postgresqlDatabase: postgres
+  service:
+    port: "5432"
+
+service:
+  type: ClusterIP
+  port: 80

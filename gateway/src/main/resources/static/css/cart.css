@@ -1,0 +1,11 @@
+[v-cloak] {
+    display: none;
+}
+
+.product-card {
+    margin: 5px; padding: 5px
+}
+
+.green {
+    background: #6AB963;
+}

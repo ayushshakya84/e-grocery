@@ -1,0 +1,16 @@
+databaseChangeLog:
+- changeSet:
+    id: 0001-attribute
+    author: voleshko
+    context: dev
+    runAlways: true
+    runOnChange: true
+    loadUpdateData:
+      primaryKey: id
+      file: data/attribute.csv
+      relativeToChangelogFile: true
+      separator: ;
+      quotChar: '"'
+      seperator: ';'
+      encoding: UTF-8
+      tableName: attribute

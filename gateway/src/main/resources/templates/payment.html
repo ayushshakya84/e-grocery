@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <link rel="shortcut icon" type="image/png" th:href="@{/img/logo.png}"/>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Payment</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;600;900&display=swap" rel="stylesheet">
+    <!--JQuery-->
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+
+    <!--Vue & axios-->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/axios/0.17.1/axios.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/js/toastr.js"></script>
+
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+
+    <!-- Css Styles -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/lib/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="css/lib/elegant-icons.css" type="text/css">
+    <link rel="stylesheet" href="css/lib/nice-select.css" type="text/css">
+    <link rel="stylesheet" href="css/lib/jquery-ui.min.css" type="text/css">
+    <link rel="stylesheet" href="css/lib/owl.carousel.min.css" type="text/css">
+    <link rel="stylesheet" href="css/lib/slicknav.min.css" type="text/css">
+    <link rel="stylesheet" href="css/lib/style.css" type="text/css">
+    <link rel="stylesheet" th:href="@{/css/payment.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/css/toastr.css" rel="stylesheet"/>
+
+</head>
+
+<body>
+<div class="container-fluid" v-cloak id="app">
+    <div data-include="header"></div>
+
+    <div class="row">
+        <div class="col-lg-6 col-md-4">
+            <div class="form-group">
+                <label for="cardNumber">Card number *</label>
+                <input v-if="order !== null"
+                       class="form-control form-control-sm"
+                       id="cardNumber"
+                       v-model="order.cardNumber"
+                />
+                <span v-if="cardNumberError !== null" class="error-text">{{ cardNumberError }}</span>
+                <br/>
+                <label for="cardValidTo">Valid to *</label>
+                <input v-if="order !== null"
+                       class="form-control form-control-sm"
+                       id="cardValidTo"
+                       v-model="order.cardValidTo"
+                />
+                <span v-if="cardValidToError !== null" class="error-text">{{ cardValidToError }}</span>
+                <br/>
+
+                <label for="cardCvv">CVV *</label>
+                <input v-if="order !== null"
+                       class="form-control form-control-sm"
+                       id="cardCvv"
+                       v-model="order.cardCvv"
+                />
+                <span v-if="cardCvvError !== null" class="error-text">{{ cardCvvError }}</span>
+                <br/>
+
+            </div>
+            <button :disabled="paymentButtonDisabled" class="site-btn green" @click="doPayment()">PAY</button>
+        </div>
+    <div class="col-lg-4 col-md-6">
+        <div class="checkout__order">
+            <h4>Your Order</h4>
+            <div class="checkout__order__total">Total
+                <span v-if="order !== null">
+                    {{ order.totalPrice }}$
+                </span>
+            </div>
+        </div>
+    </div>
+    <hr/>
+    </div>
+</div>
+</body>
+
+<script type="module" th:src="@{/js/payment.js}"></script>
+
+<script>
+    $(function () {
+        var includes = $('[data-include]')
+        $.each(includes, function () {
+            var file = 'common/' + $(this).data('include') + '.html'
+            $(this).load(file, function() {
+                $(this).html($(this).html().replace("${page-name}", "Payment Details"));
+            });
+        })
+    })
+</script>
+</html>

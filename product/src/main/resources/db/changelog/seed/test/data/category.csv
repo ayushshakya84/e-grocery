@@ -1,0 +1,17 @@
+id;name;description;is_leaf;parent_category_id
+d4d36d16-1ab8-4479-8ad1-fbebfc2b19e8;Vegetables;Vegetables;false;null
+c6576d52-0b88-45cc-b57a-c718b6d34739;Fruits;Fruits;false;null
+81e26918-5e90-4cdb-aef1-6d8b196bf2fe;Meat;Meat;false;null
+230cf46b-c4cd-437b-a1ef-b912fd33e8ff;Desserts;Desserts;false;null
+b9ec1765-dd06-4cc6-8cda-835092555c04;Drinks;Drinks;false;null
+3eb5c00d-b498-4025-802d-aa7828aa34ec;Fresh;Fresh;true;d4d36d16-1ab8-4479-8ad1-fbebfc2b19e8
+00bd3895-b855-42f5-86b5-8fd6a9e6a88e;Frozen;Frozen;true;d4d36d16-1ab8-4479-8ad1-fbebfc2b19e8
+b42e3cff-c90c-4827-9490-4b6d7c9e3768;Raw;Raw;true;c6576d52-0b88-45cc-b57a-c718b6d34739
+b6c445c9-48a9-4083-b1f6-127133c25f70;Dried;Dried;true;c6576d52-0b88-45cc-b57a-c718b6d34739
+a775309f-d207-4b80-a8c3-a3094239aa82;Beef;Beef;true;81e26918-5e90-4cdb-aef1-6d8b196bf2fe
+dabdef77-8e74-4993-906d-21104ab1f3fc;Poultry;Poultry;true;81e26918-5e90-4cdb-aef1-6d8b196bf2fe
+448a9bf5-9357-4cdb-ad39-cf955df81c41;Pork;Pork;true;81e26918-5e90-4cdb-aef1-6d8b196bf2fe
+b23e3194-daa9-4fb2-a2bb-38c163970fb0;Cakes;Cakes;true;230cf46b-c4cd-437b-a1ef-b912fd33e8ff
+eb4fc106-81bb-403e-a992-5bd5ce0b9681;Biscuits;Biscuits;true;230cf46b-c4cd-437b-a1ef-b912fd33e8ff
+95135144-39d8-436a-a507-e4bc2cffc93a;Juices;Juices;true;b9ec1765-dd06-4cc6-8cda-835092555c04
+ec0a883b-4e7b-4912-831a-c5f3cf5f045c;Water;Water;true;b9ec1765-dd06-4cc6-8cda-835092555c04

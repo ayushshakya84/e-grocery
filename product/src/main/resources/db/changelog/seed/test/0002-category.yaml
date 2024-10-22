@@ -1,0 +1,16 @@
+databaseChangeLog:
+- changeSet:
+    id: 0002-category
+    author: voleshko
+    context: dev
+    runAlways: true
+    runOnChange: true
+    loadUpdateData:
+      primaryKey: id
+      file: data/category.csv
+      relativeToChangelogFile: true
+      separator: ;
+      quotChar: '"'
+      seperator: ';'
+      encoding: UTF-8
+      tableName: category

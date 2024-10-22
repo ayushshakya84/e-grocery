@@ -1,0 +1,16 @@
+databaseChangeLog:
+- changeSet:
+    id: 0004-product
+    author: voleshko
+    context: dev
+    runAlways: true
+    runOnChange: true
+    loadUpdateData:
+      primaryKey: id
+      file: data/product.csv
+      relativeToChangelogFile: true
+      separator: ;
+      quotChar: '"'
+      seperator: ';'
+      encoding: UTF-8
+      tableName: product

@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ printf "%s-%s" .Chart.Name "deployment" }}
+  labels:
+    app: gateway
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: gateway
+  template:
+    metadata:
+      labels:
+        app: gateway
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          env:
+            - name: zuul.routes.products.url
+              value: http://product:9000
+            - name: zuul.routes.orders.url
+              value: http://order:9000
+            - name: zuul.routes.payments.url
+              value: http://payment:9000
+            - name: zuul.routes.ordersaga.url
+              value: http://ordersaga:9000
+            - name: zuul.routes.shipments.url
+              value: http://shipment:9000
+            - name: zuul.routes.profiles.url
+              value: http://profile:9000
+            - name: zuul.routes.search.url
+              value: http://search:9000
+            - name: keycloak.auth-server-url
+              value: {{ .Values.keycloak.auth.server.url }}
+            - name: keycloak.realm
+              value: {{ .Values.keycloak.realm }}
+          ports:
+            - name: web
+              containerPort: 80
+              protocol: TCP
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /actuator/health/liveness
+              port: web
+              scheme: HTTP
+            initialDelaySeconds: 60
+            periodSeconds: 60
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /actuator/health/readiness
+              port: web
+              scheme: HTTP
+            initialDelaySeconds: 60
+            periodSeconds: 60

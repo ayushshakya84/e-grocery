@@ -1,0 +1,18 @@
+keycloak:
+  server:
+    url: http://127.0.0.1:30080
+  admin:
+    username: admin
+    password: admin
+  realm:
+    name: E-GROCERY
+
+replicaCount: 1
+
+image:
+  repository: vyacheslavoleshko/profile
+  tag: "1.0.0"
+
+service:
+  type: NodePort
+  port: 9000

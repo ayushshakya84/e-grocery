@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <link rel="shortcut icon" type="image/png" th:href="@{/img/logo.png}"/>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Order</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;600;900&display=swap" rel="stylesheet">
+
+    <!--JQuery-->
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+    <!--Vue & axios-->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/axios/0.17.1/axios.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/js/toastr.js"></script>
+
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.20/lodash.min.js" integrity="sha512-90vH1Z83AJY9DmlWa8WkjkV79yfS2n2Oxhsi2dZbIv0nC4E6m5AbH8Nh156kkM7JePmqD6tcZsfad1ueoaovww==" crossorigin="anonymous"></script>
+
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/lib/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="css/lib/elegant-icons.css" type="text/css">
+    <link rel="stylesheet" href="css/lib/nice-select.css" type="text/css">
+    <link rel="stylesheet" href="css/lib/jquery-ui.min.css" type="text/css">
+    <link rel="stylesheet" href="css/lib/owl.carousel.min.css" type="text/css">
+    <link rel="stylesheet" href="css/lib/slicknav.min.css" type="text/css">
+    <link rel="stylesheet" href="css/lib/style.css" type="text/css">
+    <link rel="stylesheet" th:href="@{/css/product.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/css/toastr.css" rel="stylesheet"/>
+
+</head>
+
+<body>
+<div class="container-fluid" v-cloak id="app">
+    <!-- Page Preloder -->
+    <div id="preloder">
+        <div class="loader"></div>
+    </div>
+
+    <div data-include="header"></div>
+
+    <div class="header__cart pull-right cart">
+        <ul>
+            <li><a href="/cart">GO TO SHOPPING CART...   <i class="fa fa-shopping-cart"></i> <span>{{ cart.length }}</span></a></li>
+        </ul>
+        <div class="header__cart__price">items in cart: <span>{{ calcOrderPrice() }}$</span></div>
+    </div>
+    <!--Breadcrumbs start-->
+    <div class="row">
+        <span v-for="category in breadcrumbs" class="pointer breadcrumb_bar">
+            <span @click="onCategoryClick(category)"><h5>{{ category.name }} / </h5></span>
+        </span>
+    </div>
+
+    <!-- Hero Section Begin -->
+    <section class="hero hero-normal">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3">
+                    <div class="sidebar">
+                        <div class="sidebar__item">
+                            <h4>Categories</h4>
+                            <ul>
+                                <li class="pointer">
+                                    <a v-for="category in categories" @click="onCategoryClick(category)">
+                                        {{ category.name }}
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-9">
+                    <div class="hero__search">
+                        <div class="hero__search__form">
+                            <form action="#">
+                                <input @input="isTyping = true" v-model="searchQuery"
+                                       type="text" placeholder="Type product name...">
+                                <button class="site-btn" @click="fullTextSearch($event.target.value)">
+                                    SEARCH
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <template v-for="product in products">
+                            <div class="col-lg-4 col-md-6 col-sm-6">
+                                <div class="product__item">
+                                    <div class="product__item__pic set-bg"
+                                         :style="'background-image: url(' + getImgSrc(product.id) + ')'">
+                                        <div v-if="product.discountPercent !== 0" class="product__discount__percent">-{{ product.discountPercent }}%</div>
+                                        <ul class="product__item__pic__hover">
+                                            <li v-if="productExistsInCart(product)">
+                                                <a class="pointer" @click="changeQuantity(product, 1)">+</a>
+                                                <b style="text-shadow: 1px 1px 1px white;">{{ cart[getIndexOfCartProduct(product)].qty }}</b>
+                                                <a class="pointer" @click="changeQuantity(product, -1)">-</a>
+                                                <a class="pointer" @click="removeFromCart(product)" style="color: #db2612">х</a>
+                                            </li>
+                                            <li v-else>
+                                                <a @click="addToCart(product, 1)"><i class="fa fa-shopping-cart"></i></a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="product__item__text">
+                                        <h4 class="pointer"
+                                            href="#productDetailModal"
+                                            data-toggle="modal"
+                                            @click="onProductDetailClick(product)">
+                                            <b>{{ product.name }}</b>
+                                        </h4>
+                                        <s v-if="product.discountPercent !== 0">{{ product.price }}$</s>
+                                        <h6>{{ calcDiscountPrice(product) }}$</h6>
+                                        <p>Available: {{ product.qty }}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </template>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Product detail modal -->
+    <div id="productDetailModal" class="modal fade justify-content-center">
+        <div class="modal-dialog modal-confirm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5>{{ chosenProduct.name }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body text-center" v-if="chosenProduct !== null && chosenProduct.id !== undefined">
+                    <img class="image" :src="getImgSrc(chosenProduct.id)"/>
+                    <h5>{{ chosenProduct.name }}</h5>
+                    <s>{{ chosenProduct.price }}$</s>
+                    <h6>{{ calcDiscountPrice(chosenProduct) }}$</h6>
+                    <p>Available: {{ chosenProduct.qty }}</p>
+                    <p>Weight: {{ chosenProduct.weight.toFixed(2) }}</p>
+                    <p v-for="key in Object.keys(chosenProduct.attributes)">
+                        {{ key.charAt(0).toUpperCase() + key.slice(1) }} : {{ chosenProduct.attributes[key] }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script type="module" th:src="@{/js/products.js}"></script>
+<!-- Js Plugins -->
+<script src="js/lib/jquery-3.3.1.min.js"></script>
+<script src="js/lib/bootstrap.min.js"></script>
+<script src="js/lib/jquery.nice-select.min.js"></script>
+<script src="js/lib/jquery-ui.min.js"></script>
+<script src="js/lib/jquery.slicknav.js"></script>
+<script src="js/lib/mixitup.min.js"></script>
+<script src="js/lib/owl.carousel.min.js"></script>
+<script src="js/lib/main.js"></script>
+<script>
+    $(function () {
+        var includes = $('[data-include]')
+        $.each(includes, function () {
+            var file = 'common/' + $(this).data('include') + '.html'
+            $(this).load(file, function () {
+                $(this).html($(this).html().replace("${page-name}", "Product Catalogue"));
+            });
+        })
+    })
+</script>
+</html>

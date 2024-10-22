@@ -1,0 +1,13 @@
+replicaCount: 1
+
+image:
+  tag: 1.0.0
+
+containerPort: 8082
+
+envSecrets:
+  spring.datasource.url: order-secret
+
+service:
+  type: NodePort
+  port: 9000

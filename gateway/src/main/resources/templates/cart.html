@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <link rel="shortcut icon" type="image/png" th:href="@{/img/logo.png}"/>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Cart</title>
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;600;900&display=swap" rel="stylesheet">
+    <!--JQuery-->
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+
+    <!--Vue & axios-->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/axios/0.17.1/axios.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/js/toastr.js"></script>
+
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+
+    <script src="https://unpkg.com/vuejs-datepicker"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
+    <!-- Css Styles -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/lib/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="css/lib/elegant-icons.css" type="text/css">
+    <link rel="stylesheet" href="css/lib/nice-select.css" type="text/css">
+    <link rel="stylesheet" href="css/lib/jquery-ui.min.css" type="text/css">
+    <link rel="stylesheet" href="css/lib/owl.carousel.min.css" type="text/css">
+    <link rel="stylesheet" href="css/lib/slicknav.min.css" type="text/css">
+    <link rel="stylesheet" href="css/lib/style.css" type="text/css">
+    <link rel="stylesheet" th:href="@{/css/cart.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/css/toastr.css" rel="stylesheet"/>
+</head>
+
+<body>
+<div class="container-fluid" v-cloak id="app">
+    <div data-include="header"></div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <br/>
+            <h4>Shipment details</h4>
+            <br/>
+            <label for="address">Address *</label>
+            <input
+                    class="form-control form-control-sm"
+                    id="address"
+                    v-model="address"
+            />
+            <span v-if="addressError !== null" class="error-text">{{ addressError }}</span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <label for="shipmentFromDate">Shipment from *</label>
+            <vuejs-datepicker
+                    input-class="form-control form-control-sm"
+                    :format="format"
+                    :monday-first="true"
+                    v-model="shipmentFromDate"
+                    id="shipmentFromDate">
+            </vuejs-datepicker>
+            <label for="shipmentFromHour">Hour from *</label>
+            <input
+                    class="form-control form-control-sm"
+                    id="shipmentFromHour"
+                    v-model="shipmentFromHour"
+            />
+            <span v-if="shipmentFromError !== null" class="error-text">{{ shipmentFromError }}</span>
+        </div>
+        <div class="col-md-4">
+            <label for="shipmentToDate">Shipment to *</label>
+            <vuejs-datepicker
+                    input-class="form-control form-control-sm"
+                    :format="format"
+                    :monday-first="true"
+                    v-model="shipmentToDate"
+                    id="shipmentToDate">
+            </vuejs-datepicker>
+            <label for="shipmentToHour">Hour to *</label>
+            <input
+                    class="form-control form-control-sm"
+                    id="shipmentToHour"
+                    v-model="shipmentToHour"
+            />
+            <span v-if="shipmentToError !== null" class="error-text">{{ shipmentToError }}</span>
+        </div>
+    </div>
+    <hr/>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="shoping__cart__table">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Photo</th>
+                        <th>Product</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="product in cart">
+                        <td><img class="image" :src="getImgSrc(product.id)"/></td>
+                        <td>
+                            <h5>{{ product.name }}</h5>
+                        </td>
+                        <td class="shoping__cart__price">
+                            {{ calcDiscountPrice(product) }}$
+                        </td>
+
+                        <td class="shoping__cart__price">
+                            <span>
+                                <button class="btn btn-light"  @click="changeQuantity(product, -1)">-</button>
+                                    {{ product.qty }}
+                                <button class="btn btn-light" @click="changeQuantity(product, 1)">+</button>
+                            </span>
+                        </td>
+
+                        <td class="shoping__cart__item__close"
+                            @click="removeFromCart(product)">
+                            <span class="fa fa-close" style="color: #db2612"></span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <h3>Total price: {{ calcOrderPrice() }}$</h3>
+    <br/>
+    <button :disabled="saveOrderButtonDisabled" class="site-btn green" @click="saveOrder()">CONFIRM ORDER</button>
+    <hr/>
+</div>
+</body>
+<script type="module" th:src="@{/js/cart.js}"></script>
+
+<script>
+    $(function () {
+        var includes = $('[data-include]')
+        $.each(includes, function () {
+            var file = 'common/' + $(this).data('include') + '.html'
+            $(this).load(file, function() {
+                $(this).html($(this).html().replace("${page-name}", "Cart"));
+            });
+        })
+    })
+</script>
+</html>

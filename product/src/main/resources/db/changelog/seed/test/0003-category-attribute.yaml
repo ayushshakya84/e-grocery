@@ -1,0 +1,16 @@
+databaseChangeLog:
+- changeSet:
+    id: 0003-category-attribute
+    author: voleshko
+    context: dev
+    runAlways: true
+    runOnChange: true
+    loadUpdateData:
+      primaryKey: category_id,attribute_id
+      file: data/category_attribute.csv
+      relativeToChangelogFile: true
+      separator: ;
+      quotChar: '"'
+      seperator: ';'
+      encoding: UTF-8
+      tableName: category_attribute

@@ -1,0 +1,11 @@
+id;name;type
+d4d36d16-1ab8-4479-8ad1-fbebfc2b19e7;Type of packaging;TEXT
+d4d36d16-1ab8-4479-8ad1-fbebfc2b19e8;Supplier country;TEXT
+9b3e82fe-c2b9-4339-8548-3102a557fa78;Trademark;TEXT
+097131e4-4459-473d-83fc-7359a699cf9d;Part of body;TEXT
+e41e20d3-ae5f-4ea8-b28d-ca60b2680ea8;Is frozen;TEXT
+5e58b44b-e580-4e90-a83f-e82a7cec6eaf;Storage period,days;NUMBER
+c69582da-1497-4899-9aa2-358ea238f7a5;Flavor;TEXT
+a1f27b5b-a527-4337-be77-89e0a77ad62c;Manufacturer;TEXT
+d9bd1a9c-6a6b-4f65-b00d-edf98df5f5c8;Volume;NUMBER
+7a8f37d8-5e43-4fb2-b0b8-4ee075ea5a20;Is sparkling;TEXT

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+
+<head>
+    <link rel="shortcut icon" type="image/png" th:href="@{/img/logo.png}"/>
+
+    <meta charset="UTF-8">
+    <title>Product management</title>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;600;900&display=swap" rel="stylesheet">
+    <!--JQuery-->
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+
+    <!--Vue & axios-->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/axios/0.17.1/axios.js"></script>
+
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/js/toastr.js"></script>
+
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+
+    <!-- Css Styles -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/lib/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="css/lib/elegant-icons.css" type="text/css">
+    <link rel="stylesheet" href="css/lib/nice-select.css" type="text/css">
+    <link rel="stylesheet" href="css/lib/jquery-ui.min.css" type="text/css">
+    <link rel="stylesheet" href="css/lib/owl.carousel.min.css" type="text/css">
+    <link rel="stylesheet" href="css/lib/slicknav.min.css" type="text/css">
+    <link rel="stylesheet" href="css/lib/style.css" type="text/css">
+    <link rel="stylesheet" th:href="@{/css/product-edit.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/css/toastr.css" rel="stylesheet"/>
+</head>
+
+<body>
+<div class="container-fluid" v-cloak id="app">
+    <div data-include="header"></div>
+
+    <div class="row justify-content-center">
+        <div class="col-6">
+            <br/>
+            <a href="/product-management">
+                <button class="site-btn">
+                    <i class="fa fa-backward"> Back</i>
+                </button>
+            </a>
+            <p>Upload *.jpg image</p>
+            <input type="file" accept="image/jpeg" @change="onImageChange($event)" id="file-input">
+            <div id="preview">
+                <img v-if="photoTmpUrl" :src="photoTmpUrl" class="photo-preview"/>
+            </div>
+            <div class="form-group">
+                <label for="name">Product name *:</label>
+                <input type="text" class="form-control" id="name" v-model="product.name">
+                <span v-if="nameError !== null" class="error-text">{{ nameError }}</span>
+            </div>
+            <div class="form-group">
+                <label for="desc">Description:</label>
+                <textarea class="form-control" id="desc" v-model="product.description"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="price">Price, $ *:</label>
+                <input type="number" class="form-control" id="price" v-model="product.price">
+                <span v-if="priceError !== null" class="error-text">{{ priceError }}</span>
+            </div>
+            <div class="form-group">
+                <label for="qty">Quantity *:</label>
+                <input type="number" class="form-control" id="qty" v-model="product.qty">
+                <span v-if="qtyError !== null" class="error-text">{{ qtyError }}</span>
+            </div>
+            <div class="form-group">
+                <label for="weight">Weight, gram *:</label>
+                <input type="number" class="form-control" id="weight" v-model="product.weight">
+                <span v-if="weightError !== null" class="error-text">{{ weightError }}</span>
+            </div>
+            <div class="form-group">
+                <label for="discountPercent">Discount, %:</label>
+                <input type="number" class="form-control" id="discountPercent" v-model="product.discountPercent">
+                <span v-if="discountError !== null" class="error-text">{{ discountError }}</span>
+            </div>
+            <div class="form-group">
+                <h4>Select Category *</h4>
+                <span v-if="categoriesError !== null" class="error-text">{{ categoriesError }}</span>
+                <br/>
+                <a @click="resetCategories()" class="category"><b><u>Reset Categories</u></b></a>
+                <div class="form-group">
+                    <template v-if="categoryChosen === null">
+                        <div v-for="category in categories">
+                            <div class="card card-body bg-light category" @click="onCategoryClick(category)">
+                                <span> {{ category.name }}
+                                    <span v-show="!category.leaf">
+                                        <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                                    </span>
+                                </span>
+                            </div>
+                        </div>
+                    </template>
+                    <template v-if="categoryChosen !== null">
+                        <div class="form-group">
+                            <label for="category">Category</label>
+                            <input class="form-control" id="category" disabled :value="categoryChosen.name">
+                        </div>
+                        <hr/>
+                        <div class="form-group" v-for="attr in categoryChosen.attributes">
+                            <label> {{ attr.name }}</label>
+                            <input :type="attr.type.toLowerCase()" class="form-control"
+                                   v-model="product.attributes[_attrNameToCamelCase(attr.name)]">
+                        </div>
+                    </template>
+                    <button class="site-btn green"
+                            @click="saveOrUpdateProduct()"
+                            :disabled="buttonDisabled">
+                        Save Product
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script type="module" th:src="@{/js/product-edit.js}"></script>
+<script>
+    $(function () {
+        var includes = $('[data-include]')
+        $.each(includes, function () {
+            var file = 'common/' + $(this).data('include') + '.html'
+            $(this).load(file, function () {
+                $(this).html($(this).html().replace("${page-name}", "Product Edit"));
+            });
+        })
+    })
+</script>
+</html>

@@ -1,0 +1,16 @@
+databaseChangeLog:
+- changeSet:
+    id: 0006-category-product
+    author: voleshko
+    context: dev
+    runAlways: true
+    runOnChange: true
+    loadUpdateData:
+      primaryKey: category_id,product_id
+      file: data/category_product.csv
+      relativeToChangelogFile: true
+      separator: ;
+      quotChar: '"'
+      seperator: ';'
+      encoding: UTF-8
+      tableName: category_product

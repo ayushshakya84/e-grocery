@@ -1,0 +1,15 @@
+databaseChangeLog:
+- changeSet:
+    id: 0001-notification-template
+    author: voleshko
+    runAlways: true
+    runOnChange: true
+    loadUpdateData:
+      primaryKey: notification_type
+      file: data/notification-template.csv
+      relativeToChangelogFile: true
+      separator: ;
+      quotChar: '"'
+      seperator: ';'
+      encoding: UTF-8
+      tableName: notification_template

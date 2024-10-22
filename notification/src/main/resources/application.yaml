@@ -1,0 +1,45 @@
+server:
+  port: 8088
+
+spring:
+  application:
+    name: notification
+  liquibase:
+    enabled: true
+  datasource:
+    url: jdbc:tc:postgresql:10.9://localhost/test
+    username: test
+    password: test
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+    name: main
+
+  mail:
+    protocol: smtps
+    host: smtp.gmail.com
+    username: your-mail-address@mail.com
+    password: your-mail-password
+    properties:
+      mail.smtp:
+        starttls.enable: true
+        starttls.required: false
+    port: 465
+    test-connection: false
+    properties.mail.smtp.socketFactory.port: 25
+
+management:
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+
+      group.readiness.include: '*'
+      group.readiness.show-details: always
+
+      group.liveness.include: '*'
+      group.liveness.show-details: always
+
+  endpoints:
+    web:
+      exposure:
+        include: '*'

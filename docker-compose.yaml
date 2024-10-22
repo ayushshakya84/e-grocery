@@ -1,0 +1,65 @@
+services:
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+
+  postgres:
+    image: postgres:latest
+    container_name: keycloak_postgres
+    expose:
+      - 5432
+    ports:
+      - "15432:5432"
+    environment:
+      - "POSTGRES_DB=postgres"
+      - "POSTGRES_USER=super-admin"
+      - "POSTGRES_PASSWORD=super-password"
+
+  keycloak:
+    image: jboss/keycloak:12.0.3
+    hostname: keycloak
+    container_name: keycloak
+    environment:
+      DB_VENDOR: POSTGRES
+      DB_ADDR: 'postgres'
+      DB_DATABASE: 'postgres'
+      DB_USER: 'super-admin'
+      DB_SCHEMA: 'public'
+      DB_PASSWORD: 'super-password'
+      KEYCLOAK_USER: 'admin'
+      KEYCLOAK_PASSWORD: 'admin'
+      KEYCLOAK_IMPORT: /opt/jboss/keycloak/E-GROCERY-users-0.json
+      PROXY_ADDRESS_FORWARDING: 'true'
+    volumes:
+      - type: bind
+        source: ./keycloak/E-GROCERY-users-0.json
+        target: /opt/jboss/keycloak/E-GROCERY-users-0.json
+    expose:
+      - 8090
+    ports:
+      - "8090:8080"
+    depends_on:
+      postgres:
+        condition: service_started
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.2
+    container_name: elasticsearch
+    environment:
+      - xpack.security.enabled=false
+      - discovery.type=single-node
+    ports:
+      - 9200:9200
+      - 9300:9300
+
+  s3:
+    image: localstack/localstack:0.12.6
+    container_name: localstack_s3
+    ports:
+      - '4563-4599:4563-4599'
+      - '8091:8080'
+    environment:
+      - SERVICES=s3

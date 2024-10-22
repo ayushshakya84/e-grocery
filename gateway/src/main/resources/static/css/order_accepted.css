@@ -1,0 +1,32 @@
+[v-cloak] {
+    display: none;
+}
+
+hr.new1 {
+    border-top: 2px dashed #fff;
+    margin: 0.4rem 0
+}
+
+.card.hovercard {
+    position: relative;
+    padding-top: 0;
+    overflow: hidden;
+    text-align: center;
+    background-color: rgba(214, 224, 226, 0.2);
+}
+
+.card.hovercard .cardheader {
+    background: url("../img/breadcrumb.jpg");
+    background-size: cover;
+    height: 135px;
+}
+
+.card.hovercard .info {
+    padding: 4px 8px 10px;
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.btn{ margin: 3px; }

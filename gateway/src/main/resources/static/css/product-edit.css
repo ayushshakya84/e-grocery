@@ -1,0 +1,22 @@
+[v-cloak] {
+    display: none;
+}
+
+.photo-preview {
+    max-height: 200px;
+    max-width: 200px;
+    padding-top: 20px;
+}
+
+.category {
+    cursor: pointer;
+}
+
+.green {
+    margin-top: 10px;
+    background: #6AB963;
+}
+
+.card {
+    margin-bottom: 5px;
+}

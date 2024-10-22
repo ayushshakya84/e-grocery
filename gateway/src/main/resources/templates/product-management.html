@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+
+<head>
+    <link rel="shortcut icon" type="image/png" th:href="@{/img/logo.png}"/>
+
+    <meta charset="UTF-8">
+    <meta name="description" content="Ogani Template">
+    <meta name="keywords" content="Ogani, unica, creative, html">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Product management</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;600;900&display=swap" rel="stylesheet">
+    <!--JQuery-->
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+
+    <!--Vue & axios-->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/axios/0.17.1/axios.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/js/toastr.js"></script>
+
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.20/lodash.min.js" integrity="sha512-90vH1Z83AJY9DmlWa8WkjkV79yfS2n2Oxhsi2dZbIv0nC4E6m5AbH8Nh156kkM7JePmqD6tcZsfad1ueoaovww==" crossorigin="anonymous"></script>
+    <!--Moment.js-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
+    <!--Chart js-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue-chartjs/3.4.0/vue-chartjs.min.js"></script>
+
+    <!-- Css Styles -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/lib/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="css/lib/elegant-icons.css" type="text/css">
+    <link rel="stylesheet" href="css/lib/nice-select.css" type="text/css">
+    <link rel="stylesheet" href="css/lib/jquery-ui.min.css" type="text/css">
+    <link rel="stylesheet" href="css/lib/owl.carousel.min.css" type="text/css">
+    <link rel="stylesheet" href="css/lib/slicknav.min.css" type="text/css">
+    <link rel="stylesheet" href="css/lib/style.css" type="text/css">
+    <link rel="stylesheet" th:href="@{/css/product-management.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/css/toastr.css" rel="stylesheet"/>
+
+</head>
+
+<body>
+<div class="container-fluid" v-cloak id="app">
+    <!-- Page Preloder -->
+    <div id="preloder">
+        <div class="loader"></div>
+    </div>
+
+    <div data-include="header"></div>
+
+    <!--Breadcrumbs start-->
+    <div class="row">
+        <span v-for="category in breadcrumbs" class="pointer breadcrumb_bar">
+            <span @click="onCategoryClick(category)"><h5>{{ category.name }} / </h5></span>
+        </span>
+    </div>
+    <!-- Hero Section Begin -->
+    <section class="hero hero-normal">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3">
+                    <div class="sidebar">
+                        <div class="sidebar__item">
+                            <h4>Categories</h4>
+                            <ul>
+                                <li class="pointer">
+                                    <a v-for="category in categories" @click="onCategoryClick(category)">
+                                        {{ category.name }}
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-9">
+                    <div class="hero__search">
+                        <div class="hero__search__form">
+                            <form action="#">
+                                <input  @input="isTyping = true" v-model="searchQuery"
+                                        type="text" placeholder="Type product name...">
+                                <button type="submit" class="site-btn" @click="fullTextSearch($event.target.value)">SEARCH</button>
+                            </form>
+                        </div>
+                    </div>
+                    <a type="submit" class="primary-btn" href="/product-edit"><i class="fa fa-plus"> ADD PRODUCT</i></a>
+                    <div class="col-lg-12">
+                        <div class="shoping__cart__table">
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>Price changes </th>
+                                    <th>Photo</th>
+                                    <th>Product</th>
+                                    <th>Price</th>
+                                    <th>Quantity</th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr v-for="product in products">
+                                    <td>
+                                        <a class="btn btn-default"
+                                           @click="drawPriceChart(product)"
+                                           data-toggle="modal"
+                                           href="#priceModal">
+                                           <i class="fa fa-line-chart"></i>
+                                        </a>
+                                    </td>
+                                    <td><img class="image" :src="getImgSrc(product.id)"/></td>
+                                    <td>
+                                        <h5>{{ product.name }}</h5>
+                                    </td>
+                                    <td class="shoping__cart__price">
+                                        {{ product.price }}$
+                                    </td>
+
+                                    <td class="shoping__cart__price">
+                                        {{ product.qty }}
+                                    </td>
+
+                                    <td class="shoping__cart__item__close"
+                                        @click="editProduct(product)">
+                                        <span class="fa fa-edit"></span>
+                                    </td>
+
+                                    <td class="shoping__cart__item__close"
+                                        @click="deleteProduct(product)">
+                                        <span class="fa fa-close"></span>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Hero Section End -->
+
+    <!--Price Modal-->
+    <div id="priceModal" class="modal fade text-center justify-content-center">
+        <div class="modal-dialog modal-confirm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <canvas style="-moz-user-select: none; -webkit-user-select: none;-ms-user-select: none;" id ="chart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Js Plugins -->
+<script src="js/lib/jquery-3.3.1.min.js"></script>
+<script src="js/lib/bootstrap.min.js"></script>
+<script src="js/lib/jquery.nice-select.min.js"></script>
+<script src="js/lib/jquery-ui.min.js"></script>
+<script src="js/lib/jquery.slicknav.js"></script>
+<script src="js/lib/mixitup.min.js"></script>
+<script src="js/lib/owl.carousel.min.js"></script>
+<script src="js/lib/main.js"></script>
+
+</body>
+<script type="module" th:src="@{/js/product-management.js}"></script>
+<script>
+    $(function () {
+        var includes = $('[data-include]')
+        $.each(includes, function () {
+            var file = 'common/' + $(this).data('include') + '.html'
+            $(this).load(file, function() {
+                $(this).html($(this).html().replace("${page-name}", "Product Management"));
+            });
+        })
+    })
+</script>
+
+</html>

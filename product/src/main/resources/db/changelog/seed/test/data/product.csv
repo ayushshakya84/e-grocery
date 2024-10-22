@@ -1,0 +1,23 @@
+id;name;description;weight;price;qty;discount_percent;attributes
+d4d36d16-1ab8-4479-8ad1-fbebfc2b19e8;Onion;Onion;100.1;0.50;11;10;{"supplierCountry":"Russia"}
+acbb37c0-7356-4281-a8ac-a81b6c2e01ce;Сucumber;Сucumber;300;1.20;9;20;{"supplierCountry":"Belarus"}
+5f118a2a-4055-48cb-807e-3e703cd40b37;Pumpkin;Pumpkin;500;1.50;3;10;{"typeOfPackaging":"package","supplierCountry":"Poland"}
+379f4418-ffd4-4e88-a118-88ccfae5a8d3;Mushrooms;Mushrooms;1000;2.20;10;25;{"typeOfPackaging":"package","supplierCountry":"Finland"}
+95d7eab5-7ce1-4e33-ae23-874f346da258;Bananas;Bananas;700;0.90;2;15;{"typeOfPackaging":"package","supplierCountry":"Ecuador"}
+90159799-5232-4509-b357-376ff96470a5;Strawberry;Strawberry;300;3.00;4;30;{"typeOfPackaging":"box","supplierCountry":"Poland"}
+7b875d4a-6991-4648-9d64-63a96581e484;Prunes;Prunes;250;1.00;6;10;{"typeOfPackaging":"package","supplierCountry":"Russia"}
+193bc156-0332-484c-ad42-3e7519ba0e2a;Cranberry;Cranberry;200;1.70;7;5;{"typeOfPackaging":"plasticBag","supplierCountry":"Estonia"}
+55e7ef91-9570-41f0-b858-5927252cba1e;Beef steak;Beef steak;800;3.50;10;40;{"supplierCountry":"Russia","partOfBody":"beefBack","isFrozen":"chilled","storagePeriodDays":"7" }
+fcb8fa9b-d767-4076-b0f1-2cdceb16eaaa;Beef neck;Beef neck;700;3.20;8;35;{"supplierCountry":"Germany","partOfBody":"beefNeck","isFrozen":"frozen","storagePeriodDays":"60" }
+5ec6d155-5e52-40d8-9e0d-332afc0b4249;Chicken legs;Chicken legs;900;2.30;2;10;{"supplierCountry":"Russia","partOfBody":"chickenLegs","isFrozen":"chilled","storagePeriodDays":"15" }
+3459cd59-bd31-4ea9-889e-5e8d0998267b;Turkey breast;Turkey breast;600;2.80;4;20;{"supplierCountry":"Latvia","partOfBody":"turkeyBreast","chilled":"frozen","storagePeriodDays":"40" }
+869a77ea-113c-43f3-b62e-41582a2058dc;Pork loin;Pork loin;500;2.30;6;15;{"supplierCountry":"Russia","partOfBody":"porkBack","isFrozen":"chilled","storagePeriodDays":"7" }
+bdfadd8e-a87a-4023-8821-eb0684d1d557;Pork ribs;Pork ribs;900;2.00;1;12;{"supplierCountry":"Russia","partOfBody":"porkBreast","isFrozen":"chilled","storagePeriodDays":"12" }
+a28cfe23-9752-434f-a0d2-0864651374a3;Chocolate cake;Chocolate cake;1300;1.90;2;5;{"supplierCountry":"Russia","typeOfPackaging":"plasticBox","storagePeriodDays":"6"}
+10d6c886-b90a-4f04-a912-498eeb652fa5;Сheese cake;Сheese cake;950;2.60;6;30;{"supplierCountry":"Russia","typeOfPackaging":"box","storagePeriodDays":"4"}
+bc6bbc28-75bd-4701-96c5-b394a6c9f5ad;Berry cookies;Berry cookies;450;1.15;8;0;{"supplierCountry":"СzechRepublic","typeOfPackaging":"box","flavor":"berry","storagePeriodDays":"45"}
+cb70bfab-14bf-4c5a-84ff-00dd23d9c0af;Сaramel cookies;Сaramel cookies;350;1.35;9;20;{"supplierCountry":"Lithuania","typeOfPackaging":"box","flavor":"caramel","storagePeriodDays":"30"}
+01b8571f-39ac-4fda-9b86-083fb0050ca8;Orange juice;Orange juice;1000;1.00;7;10;{"supplierCountry":"Turkey","flavor":"orange","storagePeriodDays":"90","volume":"1"}
+f6960d25-6dbb-491d-aca0-0cee9ee2e669;Cherry juice;Cherry juice;1000;0.85;10;15;{"supplierCountry":"Ukraine","flavor":"cherry","storagePeriodDays":"80","volume":"1"}
+abffc680-825f-4af5-95b6-77234723a72e;Borjomi;Borjomi;500;0.4;9;0;{"supplierCountry":"Georgia","trademark":"borjomi","flavor":"salty","volume":"0.5","isSparkling":"sparkling"}
+9395f3a4-e3b3-412f-8311-86f86cbf144e;Coca Cola;Coca Cola;2000;1.25;7;20;{"supplierCountry":"USA","trademark":"сocaСola","flavor":"сola","volume":"2","isSparkling":"sparkling"}

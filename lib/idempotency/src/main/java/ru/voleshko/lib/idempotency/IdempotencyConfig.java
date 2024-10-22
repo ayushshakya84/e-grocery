@@ -1,0 +1,35 @@
+package ru.voleshko.lib.idempotency;
+
+import net.javacrumbs.shedlock.core.LockProvider;
+import net.javacrumbs.shedlock.provider.jdbctemplate.JdbcTemplateLockProvider;
+import net.javacrumbs.shedlock.spring.annotation.EnableSchedulerLock;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.scheduling.annotation.EnableScheduling;
+
+import javax.sql.DataSource;
+
+@Configuration
+@EnableScheduling
+@EnableSchedulerLock(defaultLockAtMostFor = "30m")
+@AutoConfigureBefore(JpaRepositoriesAutoConfiguration.class)
+@ComponentScan(basePackageClasses = IdempotencyConfig.class)
+@Import(IdempotencyRegistrar.class)
+public class IdempotencyConfig {
+
+    @Bean
+    public LockProvider lock(DataSource dataSource) {
+        return new JdbcTemplateLockProvider(
+                JdbcTemplateLockProvider.Configuration.builder()
+                        .withJdbcTemplate(new JdbcTemplate(dataSource))
+                        .usingDbTime()
+                        .build()
+        );
+    }
+
+}

@@ -1,0 +1,14 @@
+replicaCount: 1
+
+image:
+  repository: vyacheslavoleshko/search
+  tag: "1.0.0"
+
+service:
+  type: NodePort
+  port: 9000
+
+metrics:
+  serviceMonitor:
+    enabled: false
+    scrapeInterval: 5s
