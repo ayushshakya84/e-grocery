@@ -1,0 +1,33 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: payment
+  liquibase:
+    enabled: true
+  datasource:
+    url: jdbc:tc:postgresql:10.9://localhost/test
+    username: test
+    password: test
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+    name: main
+
+
+management:
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+
+      group.readiness.include: '*'
+      group.readiness.show-details: always
+
+      group.liveness.include: '*'
+      group.liveness.show-details: always
+
+  endpoints:
+    web:
+      exposure:
+        include: '*'

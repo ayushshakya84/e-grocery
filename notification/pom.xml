@@ -71,11 +71,10 @@
 			<version>1.8</version>
 		</dependency>
 		<dependency>
-			<groupId>ru.voleshko.lib</groupId>
-			<artifactId>idempotency</artifactId>
-			<version>1.0.0</version>
+    		<groupId>ru.voleshko</groupId>
+    		<artifactId>lib-idempotency</artifactId>
+    		<version>1.0.0</version>
 		</dependency>
-
 	</dependencies>
 
 	<build>

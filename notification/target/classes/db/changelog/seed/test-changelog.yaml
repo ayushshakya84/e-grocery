@@ -1,0 +1,4 @@
+databaseChangeLog:
+
+- include:
+    file: db/changelog/seed/0001-notification-template.yaml

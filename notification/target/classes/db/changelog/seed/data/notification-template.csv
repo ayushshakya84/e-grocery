@@ -1,0 +1,4 @@
+notification_type;title;template
+orderProcessing;E-GROCERY order created successfully;Dear ${userName}! Your order has been successfully created and now is in processing.
+orderSuccess;E-GROCERY order processed;Dear ${userName}! Your order has been processed successfully! Wait for the shipment on dates: [${shipmentFrom}] -- [${shipmentTo}]
+orderError;E-GROCERY order failed;Dear ${userName}! Processing of your order has failed. Please, see details on our web-site.

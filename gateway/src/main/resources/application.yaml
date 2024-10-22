@@ -7,16 +7,16 @@ spring:
 
 zuul:
   sensitive-headers: Cookie,Set-Cookie
-  routes.products.url: http://localhost:8081
-  routes.orders.url: http://localhost:8082
-  routes.payments.url: http://localhost:8083
-  routes.ordersaga.url: http://localhost:8084
-  routes.shipments.url: http://localhost:8085
-  routes.profiles.url: http://localhost:8086
-  routes.search.url: http://localhost:8087
+  routes.products.url: ${PRODUCTS_URL:http://localhost:8081}
+  routes.orders.url: ${ORDERS_URL:http://localhost:8082}
+  routes.payments.url: ${PAYMENTS_URL:http://localhost:8083}
+  routes.ordersaga.url: ${ORDERSAGA_URL:http://localhost:8084}
+  routes.shipments.url: ${SHIPMENTS_URL:http://localhost:8085}
+  routes.profiles.url: ${PROFILES_URL:http://localhost:8086}
+  routes.search.url: ${SEARCH_URL:http://localhost:8087}
 
 keycloak:
-  auth-server-url: http://localhost:8090/auth
+  auth-server-url: ${KEYCLOAK_AUTH_URL:http://localhost:8090/auth}
   realm: E-GROCERY
   resource: gateway
   public-client: true

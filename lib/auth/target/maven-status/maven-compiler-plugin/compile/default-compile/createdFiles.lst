@@ -1,0 +1,5 @@
+ru/voleshko/lib/auth/User.class
+ru/voleshko/lib/auth/UnauthorizedException.class
+ru/voleshko/lib/auth/UserServiceImpl.class
+ru/voleshko/lib/auth/UserService.class
+ru/voleshko/lib/auth/AuthConfig.class

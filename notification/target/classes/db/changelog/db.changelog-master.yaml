@@ -1,0 +1,5 @@
+databaseChangeLog:
+  - includeAll:
+      path: db/changelog/changeset
+  - include:
+      file: db/changelog/seed/test-changelog.yaml

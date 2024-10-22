@@ -1,0 +1,6 @@
+ru/voleshko/lib/outbox/OutboxMessageSender.class
+ru/voleshko/lib/outbox/OutboxMessageProcessor.class
+ru/voleshko/lib/outbox/repository/OutboxRepository.class
+ru/voleshko/lib/outbox/entity/OutboxMessage.class
+ru/voleshko/lib/outbox/OutboxMessageEntityRegistrar.class
+ru/voleshko/lib/outbox/OutboxConfig.class
