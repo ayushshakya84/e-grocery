@@ -42,14 +42,19 @@
 			<artifactId>liquibase-core</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.testcontainers</groupId>
-			<artifactId>testcontainers</artifactId>
-			<version>${testcontainers.version}</version>
+			<groupId>ru.voleshko.lib</groupId>
+			<artifactId>idempotency</artifactId>
+			<version>1.0.0</version>
 		</dependency>
 		<dependency>
-			<groupId>org.testcontainers</groupId>
-			<artifactId>postgresql</artifactId>
-			<version>${testcontainers.version}</version>
+			<groupId>ru.voleshko.lib</groupId>
+			<artifactId>transactionaloutbox</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>ru.voleshko.lib</groupId>
+			<artifactId>auth</artifactId>
+			<version>1.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.postgresql</groupId>
@@ -71,12 +76,11 @@
 			<version>1.8</version>
 		</dependency>
 		<dependency>
-    		<groupId>ru.voleshko</groupId>
-    		<artifactId>lib-idempotency</artifactId>
-    		<version>1.0.0</version>
+    		<groupId>net.javacrumbs.shedlock</groupId>
+    		<artifactId>shedlock-spring</artifactId>
+    		<version>4.0.0</version> <!-- Choose a version compatible with your setup -->
 		</dependency>
 	</dependencies>
-
 	<build>
 		<plugins>
 			<plugin>
