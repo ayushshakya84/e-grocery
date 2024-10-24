@@ -11,17 +11,17 @@ spring:
       max-file-size: 5MB
 
 elastic:
-  host: localhost
-  port: 9200
+  host: ${elastic_host:}
+  port: ${elastic_port:9200}
   scheme: http
   index:
     name: product
 
 s3:
-  url: http://localhost:4566
-  region: us-east-1
-  access-key: accesskey
-  secret-key: secretkey
+  url: ${s3_url:http://s3.default.svc.cluster.local:4566}
+  region: ${s3_region:us-east-1}
+  access-key: ${s3_access_key:}
+  secret-key: ${s3_secret_key:}
   buckets:
     image-bucket-name: e-grocery-img
 

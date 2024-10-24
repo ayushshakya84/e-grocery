@@ -6,9 +6,9 @@ spring:
   liquibase:
     enabled: true
   datasource:
-    url: ${POSTGRESS_URL:jdbc:tc:postgresql:10.9://postgres.e-grocery.svc.cluster.local/notification}
-    username:  ${POSTGRESS_USERNAME:postgress}
-    password: ${POSTGRESS_PASSWORD:password}
+    url: ${POSTGRESS_URL:jdbc:postgresql://postgres.default.svc.cluster.local:5432/order}
+    username: ${POSTGRES_USER:postgress}
+    password: ${POSTGRES_PASSWORD:}
     driver-class-name: org.postgresql.Driver
     name: main
 

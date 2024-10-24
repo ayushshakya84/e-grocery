@@ -6,10 +6,10 @@ spring:
     name: profile
 
 keycloak:
-  realm.name: E-GROCERY
-  server-url: http://localhost:8090
-  admin-username: admin
-  admin-password: admin
+  realm.name: ${KEYCLOAK_REALM_NAME:E-GROCERY} 
+  server-url: ${KEYCLOAK_SERVER_URL:}
+  admin-username: ${KEYCLOAK_ADMIN_USERNAME:admin}
+  admin-password: ${KEYCLOAK_ADMIN_PASSWORD:admin}
 
 management:
   endpoint:

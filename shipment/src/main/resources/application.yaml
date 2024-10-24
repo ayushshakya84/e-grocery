@@ -7,10 +7,10 @@ spring:
   liquibase:
     enabled: true
   datasource:
-    url: jdbc:tc:postgresql:10.9://localhost/test
-    username: test
-    password: test
-    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+    url: ${POSTGRESS_URL:jdbc:postgresql://postgres.default.svc.cluster.local:5432/shipment}
+    username: ${POSTGRES_USER:postgress}
+    password: ${POSTGRES_PASSWORD:}
+    driver-class-name: org.postgresql.Driver
     name: main
 
 management:
