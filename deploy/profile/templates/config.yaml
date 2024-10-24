@@ -1,6 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ printf "%s-%s" .Chart.Name "config" }}
-data:
-  KEYCLOACK_SERVER_URL: {{ .Values.keycloak.server.url }}

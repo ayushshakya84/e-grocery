@@ -1,6 +1,0 @@
-/mnt/c/Users/Ayush/Desktop/e-grocery/lib/transactionaloutbox/src/main/java/ru/voleshko/lib/outbox/OutboxMessageSender.java
-/mnt/c/Users/Ayush/Desktop/e-grocery/lib/transactionaloutbox/src/main/java/ru/voleshko/lib/outbox/entity/OutboxMessage.java
-/mnt/c/Users/Ayush/Desktop/e-grocery/lib/transactionaloutbox/src/main/java/ru/voleshko/lib/outbox/OutboxConfig.java
-/mnt/c/Users/Ayush/Desktop/e-grocery/lib/transactionaloutbox/src/main/java/ru/voleshko/lib/outbox/OutboxMessageProcessor.java
-/mnt/c/Users/Ayush/Desktop/e-grocery/lib/transactionaloutbox/src/main/java/ru/voleshko/lib/outbox/OutboxMessageEntityRegistrar.java
-/mnt/c/Users/Ayush/Desktop/e-grocery/lib/transactionaloutbox/src/main/java/ru/voleshko/lib/outbox/repository/OutboxRepository.java

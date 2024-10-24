@@ -7,8 +7,8 @@ spring:
   liquibase:
     enabled: true
   datasource:
-    url: jdbc:tc:postgresql:10.9://localhost/test
-    username: test
+    url: ${POSTGRESS_URL:jdbc:tc:postgresql:10.9://postgres.e-grocery.svc.cluster.local/notification}
+    username:  ${POSTGRESS_URL:}
     password: test
     driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
     name: main

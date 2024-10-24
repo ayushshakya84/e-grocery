@@ -1,6 +1,0 @@
-ru/voleshko/lib/idempotency/IdempotencyRegistrar.class
-ru/voleshko/lib/idempotency/Idempotent.class
-ru/voleshko/lib/idempotency/IdempotentAspect.class
-ru/voleshko/lib/idempotency/IdempotencyConfig.class
-ru/voleshko/lib/idempotency/CleanUpIdempotencyKeysJob.class
-ru/voleshko/lib/idempotency/IdempotencyKey.class

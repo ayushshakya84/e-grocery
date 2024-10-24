@@ -1,6 +1,0 @@
-/mnt/c/Users/Ayush/Desktop/e-grocery/lib/idempotency/src/main/java/ru/voleshko/lib/idempotency/Idempotent.java
-/mnt/c/Users/Ayush/Desktop/e-grocery/lib/idempotency/src/main/java/ru/voleshko/lib/idempotency/IdempotencyRegistrar.java
-/mnt/c/Users/Ayush/Desktop/e-grocery/lib/idempotency/src/main/java/ru/voleshko/lib/idempotency/CleanUpIdempotencyKeysJob.java
-/mnt/c/Users/Ayush/Desktop/e-grocery/lib/idempotency/src/main/java/ru/voleshko/lib/idempotency/IdempotencyConfig.java
-/mnt/c/Users/Ayush/Desktop/e-grocery/lib/idempotency/src/main/java/ru/voleshko/lib/idempotency/IdempotencyKey.java
-/mnt/c/Users/Ayush/Desktop/e-grocery/lib/idempotency/src/main/java/ru/voleshko/lib/idempotency/IdempotentAspect.java
