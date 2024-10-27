@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
@@ -27,6 +28,15 @@ public class SagaListener {
     private final ObjectMapper objectMapper;
     private final OrderService orderService;
     private final SagaListener self;
+
+    @Value("${spring.rabbitmq.queues.request}")
+    private String orderStatusRequestQueue;
+
+    @Value("${spring.rabbitmq.queues.success}")
+    private String orderStatusSuccessQueue;
+
+    @Value("${spring.rabbitmq.queues.fail}")
+    private String orderStatusFailQueue;
 
     public SagaListener(OutboxRepository outboxRepository,
                         ObjectMapper objectMapper,

@@ -14,7 +14,12 @@ spring:
   rabbitmq:
     host: ${rabbitmq_host:}
     port: ${rabbitmq_port:}
-
+    username: ${rabbitmq_username:guest}
+    password: ${rabbitmq_password:guest}
+    queues:
+      request: orderStatusRequestQueue
+      success: orderStatusSuccessQueue
+      fail: orderStatusFailQueue
 
 management:
   endpoint:
