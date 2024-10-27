@@ -17,6 +17,12 @@ elastic:
   index:
     name: product
 
+rabbitmq:
+    host: ${rabbitmq_host:}
+    port: ${rabbitmq_port:}
+    username: ${rabbitmq_username:guest}
+    password: ${rabbitmq_password:guest}
+
 s3:
   url: ${s3_url:http://s3.default.svc.cluster.local:4566}
   region: ${s3_region:us-east-1}
