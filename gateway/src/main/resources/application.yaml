@@ -17,7 +17,7 @@ zuul:
 
 keycloak:
   auth-server-url: ${KEYCLOAK_AUTH_URL:http://localhost:8090/auth}
-  realm: E-GROCERY
+  realm: ${KEYCLOAK_REALM_NAME:E-GROCERY:}
   resource: gateway
   public-client: true
   principal-attribute: preferred_username

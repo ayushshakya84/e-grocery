@@ -11,6 +11,10 @@ spring:
     password: ${POSTGRES_PASSWORD:}
     driver-class-name: org.postgresql.Driver
     name: main
+  rabbitmq:
+    host: ${rabbitmq_host:}
+    port: ${rabbitmq_port:}
+
 
 management:
   endpoint:
