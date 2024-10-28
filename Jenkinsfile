@@ -31,7 +31,7 @@ pipeline {
         stage('Package Build') {
             when {
                 expression {
-                    return sh(script: 'git diff --name-only HEAD~1 HEAD | grep '^${env.APP_DIR}/'", returnStatus: true) == 0
+                    return sh(script: 'git diff --name-only HEAD~1 HEAD | grep '^${APP_DIR}/'", returnStatus: true) == 0
                 }
             }
             steps {
@@ -54,7 +54,7 @@ pipeline {
         stage("Docker Image Build") {
             when {
                 expression {
-                    return sh(script: 'git diff --name-only HEAD~1 HEAD | grep '^${env.APP_DIR}/'", returnStatus: true) == 0
+                    return sh(script: 'git diff --name-only HEAD~1 HEAD | grep '^${APP_DIR}/'", returnStatus: true) == 0
                 }
             }
             steps {
@@ -74,7 +74,7 @@ pipeline {
         stage("ECR Image Pushing") {
             when {
                 expression {
-                    return sh(script: 'git diff --name-only HEAD~1 HEAD | grep '^${env.APP_DIR}/'", returnStatus: true) == 0
+                    return sh(script: 'git diff --name-only HEAD~1 HEAD | grep '^${APP_DIR}/'", returnStatus: true) == 0
                 }
             }
             steps {
