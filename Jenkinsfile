@@ -26,14 +26,6 @@ pipeline {
         AWS_DEFAULT_REGION = 'ap-south-1'
         REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/"
     }
-    stages {
-        stage('Checkout from Git') {
-            steps {
-                container('docker') {
-                    git credentialsId: 'GITHUB_CRED', url: 'https://github.com/ayushshakya84/e-grocery.git', branch: 'main'
-                }
-            }
-        }
         stage('Package Build') {
             when {
                 expression {
