@@ -1,6 +1,7 @@
 server:
   port: 8080
 #test for something
+# sdnlkfajsd lkfjasdklfj
 spring:
   application.name: gateway
   thymeleaf.cache: false
