@@ -1,11 +1,6 @@
 server:
   port: 8082
-#this is test for application
-#this is second test for application
-#this is third line for application
-#this is fourth line for application
-#this is sdgl 
-#sdlkjfadslk asdlkfj
+#ladksjffffffffffffff
 spring:
   application.name: order
   liquibase:
