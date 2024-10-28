@@ -1,4 +1,3 @@
 databaseChangeLog:
   - includeAll:
       path: db/changelog/changeset
-#this is new github changes
