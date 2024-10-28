@@ -19,6 +19,7 @@ rabbitmq:
     username: ${rabbitmq_username:guest}
     password: ${rabbitmq_password:guest}
 #this is second test jenkins
+#this is second test jenkins
 management:
   endpoint:
     health:

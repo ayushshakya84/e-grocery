@@ -23,6 +23,7 @@ pipeline {
     
     environment  {
         AWS_ACCOUNT_ID = credentials('AWS_ACCOUNT_ID')
+        AWS_ECR_REPO_NAME = credentials('ecr-e-grocery-${JOB_NAME}')
         AWS_DEFAULT_REGION = 'ap-south-1'
         REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/"
     }
@@ -42,7 +43,7 @@ pipeline {
         stage('Package Build') {
             when {
                 expression {
-                    return sh(script: "git diff --name-only HEAD~1 HEAD | grep '^${APP_DIR}/'", returnStatus: true) == 0
+                    return sh(script: "git diff --name-only HEAD~1 HEAD | grep '^${JOB_NAME}/'", returnStatus: true) == 0
                 }
             }
             steps {
@@ -66,7 +67,7 @@ pipeline {
         stage("Docker Image Build") {
             when {
                 expression {
-                    return sh(script: "git diff --name-only HEAD~1 HEAD | grep '^${APP_DIR}/'", returnStatus: true) == 0
+                    return sh(script: "git diff --name-only HEAD~1 HEAD | grep '^${JOB_NAME}/'", returnStatus: true) == 0
                 }
             }
             steps {
@@ -78,7 +79,7 @@ pipeline {
                             sleep 2
                             docker system prune -f
                             docker container prune -f
-                            docker build -t ${REPOSITORY_URI}${AWS_ACCOUNT_ID}-${APP_DIR}:${BUILD_NUMBER} .
+                            docker build -t ${REPOSITORY_URI}${AWS_ECR_REPO_NAME}:${BUILD_NUMBER} .
                             """
                         }
                     }
@@ -89,7 +90,7 @@ pipeline {
         stage("ECR Image Pushing") {
             when {
                 expression {
-                    return sh(script: "git diff --name-only HEAD~1 HEAD | grep '^${APP_DIR}/'", returnStatus: true) == 0
+                    return sh(script: "git diff --name-only HEAD~1 HEAD | grep '^${JOB_NAME}/'", returnStatus: true) == 0
                 }
             }
             steps {
@@ -98,7 +99,7 @@ pipeline {
                         script {
                             sh """ 
                             aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${REPOSITORY_URI}
-                            docker push ${REPOSITORY_URI}${AWS_ACCOUNT_ID}-${APP_DIR}:${BUILD_NUMBER}
+                            docker push ${REPOSITORY_URI}${AWS_ECR_REPO_NAME}:${BUILD_NUMBER}
                             """
                         }
                     }
