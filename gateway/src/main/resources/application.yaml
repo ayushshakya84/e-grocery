@@ -4,6 +4,9 @@ server:
 #this is a second test from my application
 #this is third line for test application
 #this is third line for test applicationsdf
+#s is a second test from my application
+#this is third line for test application
+#this is third line for test applicationsdf
 spring:
   application.name: gateway
   thymeleaf.cache: false
