@@ -1,6 +1,6 @@
 server:
   port: 8080
-
+#this is test from my application
 spring:
   application.name: gateway
   thymeleaf.cache: false
