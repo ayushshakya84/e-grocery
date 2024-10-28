@@ -26,6 +26,7 @@ pipeline {
         AWS_DEFAULT_REGION = 'ap-south-1'
         REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/"
     }
+    stages {
         stage('Package Build') {
             when {
                 expression {
