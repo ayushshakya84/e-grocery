@@ -1,7 +1,7 @@
 pipeline {
     agent {
         kubernetes {
-            yaml '''
+            yaml """
             apiVersion: v1
             kind: Pod
             spec:
@@ -17,7 +17,7 @@ pipeline {
                 command:
                 - cat
                 tty: true
-            '''
+            """
         }
     }
     environment  {
@@ -25,13 +25,13 @@ pipeline {
         AWS_ECR_REPO_NAME = credentials('ecr-e-grocery-order')
         AWS_DEFAULT_REGION = 'ap-south-1'
         REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/"
-        APP_DIR = 'order'
+        APP_DIR = 'order'  // Define your application directory here
     }
     stages {
         stage('Package Build') {
             when {
                 expression {
-                    return sh(script: 'git diff --name-only HEAD~1 HEAD | grep '^${APP_DIR}/'", returnStatus: true) == 0
+                    return sh(script: "git diff --name-only HEAD~1 HEAD | grep '^${APP_DIR}/'", returnStatus: true) == 0
                 }
             }
             steps {
@@ -54,7 +54,7 @@ pipeline {
         stage("Docker Image Build") {
             when {
                 expression {
-                    return sh(script: 'git diff --name-only HEAD~1 HEAD | grep '^${APP_DIR}/'", returnStatus: true) == 0
+                    return sh(script: "git diff --name-only HEAD~1 HEAD | grep '^${APP_DIR}/'", returnStatus: true) == 0
                 }
             }
             steps {
@@ -74,7 +74,7 @@ pipeline {
         stage("ECR Image Pushing") {
             when {
                 expression {
-                    return sh(script: 'git diff --name-only HEAD~1 HEAD | grep '^${APP_DIR}/'", returnStatus: true) == 0
+                    return sh(script: "git diff --name-only HEAD~1 HEAD | grep '^${APP_DIR}/'", returnStatus: true) == 0
                 }
             }
             steps {
