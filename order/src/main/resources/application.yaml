@@ -21,6 +21,7 @@ spring:
       success: orderStatusSuccessQueue
       fail: orderStatusFailQueue
 #this is test for jenkins
+#this is test for jenkins
 management:
   endpoint:
     health:
