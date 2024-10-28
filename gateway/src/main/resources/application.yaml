@@ -1,9 +1,6 @@
 server:
   port: 8080
-#this is test from my application
-#this is a second test from my application
-#this is new line added
-#this is new update
+#test for something
 spring:
   application.name: gateway
   thymeleaf.cache: false
