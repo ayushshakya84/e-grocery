@@ -3,7 +3,7 @@ server:
 spring:
   application.name: gateway
   thymeleaf.cache: false
-
+#This line added for testing jenkins
 zuul:
   sensitive-headers: Cookie,Set-Cookie
   routes.products.url: ${PRODUCTS_URL:http://localhost:8081}
