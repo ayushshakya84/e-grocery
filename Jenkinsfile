@@ -13,7 +13,7 @@ pipeline {
                 securityContext:
                   privileged: true
               - name: maven
-                image: maven:3.6.3-jdk-14
+                image: maven:3.6.3-openjdk-17
                 command:
                 - cat
                 tty: true
@@ -79,7 +79,6 @@ pipeline {
                     dir("${env.WORKSPACE}/${env.APP_DIR}") {
                         withSonarQubeEnv('sonar-server') {
                             sh ''' 
-                            apt-get update && apt-get install -y openjdk-17-jdk
                             java -version
                             $SCANNER_HOME/bin/sonar-scanner \
                             -Dsonar.organization=ayushshakya84 \
