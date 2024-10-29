@@ -21,7 +21,7 @@ pipeline {
         }
     }
     
-    environment {
+    environment  {
         AWS_ACCOUNT_ID = credentials('AWS_ACCOUNT_ID')
         AWS_DEFAULT_REGION = 'ap-south-1'
         REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/"
@@ -33,21 +33,19 @@ pipeline {
                 script {
                     def changedDirs = sh(script: "git diff --name-only HEAD~1 HEAD", returnStdout: true).trim().tokenize('\n').collect { it.split('/')[0] }.unique()
                     APP_DIR = changedDirs.find { it in ['gateway', 'notification', 'order', 'odersaga', 'payment', 'product', 'profile', 'search', 'shipment'] }
-                    if (APP_DIR) {
-                        env.APP_DIR = APP_DIR // Set the environment variable for the application directory
-                        env.AWS_ECR_REPO_NAME = "ecr-e-grocery-${APP_DIR}" // Dynamically set AWS_ECR_REPO_NAME based on APP_DIR
-                        echo "Detected application directory: ${APP_DIR}"
-                        echo "ECR Repository Name: ${AWS_ECR_REPO_NAME}"
-                    } else {
-                        error("No recognized service directory found in recent changes.")
-                    }
+                    env.APP_DIR = APP_DIR // Set the environment variable
+                    env.AWS_ECR_REPO_NAME = "ecr-e-grocery-${APP_DIR}" 
+                    echo "Detected application directory: ${APP_DIR}"
+                    echo "${AWS_ECR_REPO_NAME}"
                 }
             }
         }
 
         stage('Package Build') {
             when {
-                expression { return env.APP_DIR }
+                expression {
+                    return sh(script: "git diff --name-only HEAD~1 HEAD | grep '^${APP_DIR}/'", returnStatus: true) == 0
+                }
             }
             steps {
                 container('maven') {
@@ -71,14 +69,16 @@ pipeline {
 
         stage("Docker Image Build") {
             when {
-                expression { return env.APP_DIR }
+                expression {
+                    return sh(script: "git diff --name-only HEAD~1 HEAD | grep '^${APP_DIR}/'", returnStatus: true) == 0
+                }
             }
             steps {
                 container('docker') {
                     script {
                         dir("${env.WORKSPACE}/${env.APP_DIR}") {
                             sh """ 
-                            echo "Building Docker image for ${APP_DIR} service"
+                            echo "Building Image for ${APP_DIR} service"
                             dockerd &
                             sleep 2
                             docker system prune -f
@@ -93,14 +93,16 @@ pipeline {
 
         stage("ECR Image Pushing") {
             when {
-                expression { return env.APP_DIR }
+                expression {
+                    return sh(script: "git diff --name-only HEAD~1 HEAD | grep '^${APP_DIR}/'", returnStatus: true) == 0
+                }
             }
             steps {
                 container('docker') {
                     withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws-cred', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
                         script {
                             sh """
-                            echo "Pushing Docker image for ${APP_DIR} service"
+                            echo "Pushing Image of ${APP_DIR} service"
                             aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${REPOSITORY_URI}
                             docker push ${REPOSITORY_URI}${AWS_ECR_REPO_NAME}:${BUILD_NUMBER}
                             """
