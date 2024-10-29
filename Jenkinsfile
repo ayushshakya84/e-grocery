@@ -28,12 +28,12 @@ pipeline {
     }
 
     stages {
-        stage('Order Service Build') {
+        stage('Order Service') {
             when {
                 expression { sh(script: "git diff --name-only HEAD~1 HEAD | grep '^order/'", returnStatus: true) == 0 }
             }
             stages {
-                stage('Package Build') {
+                stage('Build Order Service') {
                     steps {
                         container('maven') {
                             dir('order') {
@@ -43,7 +43,7 @@ pipeline {
                     }
                 }
 
-                stage('Docker Build & Push') {
+                stage('Docker Build & Push Order Service') {
                     steps {
                         container('docker') {
                             script {
@@ -58,12 +58,12 @@ pipeline {
             }
         }
 
-        stage('Payment Service Build') {
+        stage('Payment Service') {
             when {
                 expression { sh(script: "git diff --name-only HEAD~1 HEAD | grep '^payment/'", returnStatus: true) == 0 }
             }
             stages {
-                stage('Package Build') {
+                stage('Build Payment Service') {
                     steps {
                         container('maven') {
                             dir('payment') {
@@ -73,7 +73,7 @@ pipeline {
                     }
                 }
 
-                stage('Docker Build & Push') {
+                stage('Docker Build & Push Payment Service') {
                     steps {
                         container('docker') {
                             script {
@@ -88,12 +88,12 @@ pipeline {
             }
         }
 
-        stage('Inventory Service Build') {
+        stage('Inventory Service') {
             when {
                 expression { sh(script: "git diff --name-only HEAD~1 HEAD | grep '^inventory/'", returnStatus: true) == 0 }
             }
             stages {
-                stage('Package Build') {
+                stage('Build Inventory Service') {
                     steps {
                         container('maven') {
                             dir('inventory') {
@@ -103,7 +103,7 @@ pipeline {
                     }
                 }
 
-                stage('Docker Build & Push') {
+                stage('Docker Build & Push Inventory Service') {
                     steps {
                         container('docker') {
                             script {
@@ -118,6 +118,6 @@ pipeline {
             }
         }
 
-        // Add more stages for additional services if needed
+        // Add more stages for other microservices following the same structure
     }
 }
