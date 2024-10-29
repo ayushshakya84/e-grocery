@@ -79,7 +79,7 @@ pipeline {
                     dir("${env.WORKSPACE}/${env.APP_DIR}") {
                         withSonarQubeEnv('sonar-server') {
                             sh ''' 
-                            apt-get update && apt-get install -y openjdk-11-jdk
+                            apt-get update && apt-get install -y openjdk-17-jdk
                             java -version
                             $SCANNER_HOME/bin/sonar-scanner \
                             -Dsonar.organization=ayushshakya84 \
