@@ -13,7 +13,7 @@ pipeline {
                 securityContext:
                   privileged: true
               - name: maven
-                image: maven:3.6.3-jdk-13
+                image: maven:3.6.3-jdk-14
                 command:
                 - cat
                 tty: true
@@ -76,7 +76,7 @@ pipeline {
             }
             steps {
                 container('maven') {
-                    dir("${env.WORKSPACE}/${env.APP_DIR}/target/classes") {
+                    dir("${env.WORKSPACE}/${env.APP_DIR}") {
                         withSonarQubeEnv('sonar-server') {
                             sh ''' 
                             apt-get update && apt-get install -y openjdk-17-jdk
