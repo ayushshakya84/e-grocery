@@ -13,7 +13,7 @@ pipeline {
                 securityContext:
                   privileged: true
               - name: maven
-                image: maven:3.8.5-openjdk-17
+                image: maven:3.6.3-jdk-11
                 command:
                 - cat
                 tty: true
@@ -74,8 +74,11 @@ pipeline {
                     return sh(script: "git diff --name-only HEAD~1 HEAD | grep '^${APP_DIR}/'", returnStatus: true) == 0
                 }
             }
+            tools {
+                jdk 'jdk'
+            }
             steps {
-                container('maven') {
+                container('docker') {
                     dir("${env.WORKSPACE}/${env.APP_DIR}") {
                         withSonarQubeEnv('sonar-server') {
                             sh ''' 
@@ -98,7 +101,7 @@ pipeline {
                 }
             }
             steps {
-                container('maven') {
+                container('docker') {
                     script {
                         waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token'
                     }
