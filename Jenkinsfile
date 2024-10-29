@@ -1,5 +1,5 @@
 pipeline {
-        agent {
+    agent {
         kubernetes {
             yaml """
             apiVersion: v1
@@ -20,101 +20,87 @@ pipeline {
             """
         }
     }
-
-    environment {
+    
+    environment  {
         AWS_ACCOUNT_ID = credentials('AWS_ACCOUNT_ID')
+        AWS_ECR_REPO_NAME = credentials('ecr-e-grocery-order')
         AWS_DEFAULT_REGION = 'ap-south-1'
         REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/"
     }
 
     stages {
-        stage('Order Service') {
-            when {
-               changeset "**/order/*.*"
-                beforeAgent true
-            }
-            stages {
-                stage('Build Order Service') {
-                    steps {
-                        container('maven') {
-                            dir('order') {
-                                sh 'mvn clean package'
-                            }
-                        }
-                    }
+        stage('Determine App Directory') {
+            steps {
+                script {
+                    def changedDirs = sh(script: "git diff --name-only HEAD~1 HEAD", returnStdout: true).trim().tokenize('\n').collect { it.split('/')[0] }.unique()
+                    APP_DIR = changedDirs.find { it in ['gateway', 'notification', 'order', 'odersaga', 'payment', 'product', 'profile', 'search', 'shipment'] }
+                    env.APP_DIR = APP_DIR // Set the environment variable
+                    echo "Detected application directory: ${APP_DIR}"
                 }
+            }
+        }
 
-                stage('Docker Build & Push Order Service') {
-                    steps {
-                        container('docker') {
-                            script {
-                                sh """
-                                docker build -t ${REPOSITORY_URI}order:${BUILD_NUMBER} order/
-                                docker push ${REPOSITORY_URI}order:${BUILD_NUMBER}
-                                """
-                            }
+        stage('Package Build') {
+            when {
+                expression {
+                    return sh(script: "git diff --name-only HEAD~1 HEAD | grep '^${APP_DIR}/'", returnStatus: true) == 0
+                }
+            }
+            steps {
+                container('maven') {
+                    script {
+                        dir('lib/') {
+                            sh '''
+                            bash script.sh
+                            '''
+                        }
+                        dir("${env.WORKSPACE}/${env.APP_DIR}") {
+                            sh ''' 
+                            mvn clean package
+                            '''
                         }
                     }
                 }
             }
         }
 
-        stage('Payment Service') {
+        stage("Docker Image Build") {
             when {
-               changeset "**/payment/*.*"
-               beforeAgent true
-            }
-            stages {
-                stage('Build Payment Service') {
-                    steps {
-                        container('maven') {
-                            dir('payment') {
-                                sh 'mvn clean package'
-                            }
-                        }
-                    }
+                expression {
+                    return sh(script: "git diff --name-only HEAD~1 HEAD | grep '^${APP_DIR}/'", returnStatus: true) == 0
                 }
-
-                stage('Docker Build & Push Payment Service') {
-                    steps {
-                        container('docker') {
-                            script {
-                                sh """
-                                docker build -t ${REPOSITORY_URI}payment:${BUILD_NUMBER} payment/
-                                docker push ${REPOSITORY_URI}payment:${BUILD_NUMBER}
-                                """
-                            }
+            }
+            steps {
+                container('docker') {
+                    script {
+                        dir("${env.WORKSPACE}/${env.APP_DIR}") {
+                            sh """ 
+                            dockerd &
+                            sleep 2
+                            docker system prune -f
+                            docker container prune -f
+                            docker build -t ${REPOSITORY_URI}${AWS_ECR_REPO_NAME}:${BUILD_NUMBER} .
+                            """
                         }
                     }
                 }
             }
         }
 
-        stage('Inventory Service') {
+        stage("ECR Image Pushing") {
             when {
-               changeset "**/Inventory/*.*"
-                beforeAgent true
-            }
-            stages {
-                stage('Build Inventory Service') {
-                    steps {
-                        container('maven') {
-                            dir('inventory') {
-                                sh 'mvn clean package'
-                            }
-                        }
-                    }
+                expression {
+                    return sh(script: "git diff --name-only HEAD~1 HEAD | grep '^${APP_DIR}/'", returnStatus: true) == 0
                 }
-
-                stage('Docker Build & Push Inventory Service') {
-                    steps {
-                        container('docker') {
-                            script {
-                                sh """
-                                docker build -t ${REPOSITORY_URI}inventory:${BUILD_NUMBER} inventory/
-                                docker push ${REPOSITORY_URI}inventory:${BUILD_NUMBER}
-                                """
-                            }
+            }
+            steps {
+                container('docker') {
+                    withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws-cred', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                        script {
+                            sh """ 
+                            aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${REPOSITORY_URI}
+                            docker push ${REPOSITORY_URI}${AWS_ECR_REPO_NAME}:${BUILD_NUMBER}
+                            """
                         }
                     }
                 }
@@ -122,4 +108,3 @@ pipeline {
         }
     }
 }
-        // Add more stages for other microservices following the same structure
