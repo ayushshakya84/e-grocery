@@ -106,32 +106,6 @@ pipeline {
             }
         }
 
-        stage('Package Build') {
-            when {
-                expression {
-                    return sh(script: "git diff --name-only HEAD~1 HEAD | grep '^${APP_DIR}/'", returnStatus: true) == 0
-                }
-            }
-            steps {
-                container('maven') {
-                    script {
-                        dir('lib/') {
-                            sh '''
-                            echo "Installing Dependencies for ${APP_DIR} service"
-                            bash script.sh
-                            '''
-                        }
-                        dir("${env.WORKSPACE}/${env.APP_DIR}") {
-                            sh ''' 
-                            echo "Building package for ${APP_DIR} service"
-                            mvn clean package
-                            '''
-                        }
-                    }
-                }
-            }
-        }
-
         stage("Docker Image Build") {
             when {
                 expression {
