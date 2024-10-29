@@ -1,6 +1,5 @@
 server:
   port: 8083
-#this is second line
 spring:
   application:
     name: payment
@@ -18,8 +17,6 @@ rabbitmq:
     port: ${rabbitmq_port:}
     username: ${rabbitmq_username:guest}
     password: ${rabbitmq_password:guest}
-#this is second test jenkins
-#this is second test jenkins
 management:
   endpoint:
     health:
