@@ -1,6 +1,6 @@
 server:
   port: 8088
-
+#this is new jenkins test
 spring:
   application:
     name: notification
