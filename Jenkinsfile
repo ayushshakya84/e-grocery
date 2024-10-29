@@ -49,7 +49,7 @@ pipeline {
                 }
             }
             steps {
-                container('docker') {
+                container('maven') {
                     dir("${env.WORKSPACE}/${env.APP_DIR}") {
                         withSonarQubeEnv('sonar-server') {
                             sh ''' 
@@ -71,7 +71,7 @@ pipeline {
                 }
             }
             steps {
-                container('docker') {
+                container('maven') {
                     script {
                         waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token'
                     }
