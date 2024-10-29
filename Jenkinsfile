@@ -51,11 +51,13 @@ pipeline {
                     script {
                         dir('lib/') {
                             sh '''
+                            echo "Installing Dependencies for ${APP_DIR} service"
                             bash script.sh
                             '''
                         }
                         dir("${env.WORKSPACE}/${env.APP_DIR}") {
                             sh ''' 
+                            echo "Building package for ${APP_DIR} service"
                             mvn clean package
                             '''
                         }
@@ -75,6 +77,7 @@ pipeline {
                     script {
                         dir("${env.WORKSPACE}/${env.APP_DIR}") {
                             sh """ 
+                            echo "Building Image for ${APP_DIR} service"
                             dockerd &
                             sleep 2
                             docker system prune -f
@@ -97,7 +100,8 @@ pipeline {
                 container('docker') {
                     withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws-cred', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
                         script {
-                            sh """ 
+                            sh """
+                            echo "Pushing Image of ${APP_DIR} service"
                             aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${REPOSITORY_URI}
                             docker push ${REPOSITORY_URI}${AWS_ECR_REPO_NAME}:${BUILD_NUMBER}
                             """
