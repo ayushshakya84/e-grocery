@@ -85,6 +85,7 @@ pipeline {
                             -Dsonar.organization=ayushshakya84 \
                             -Dsonar.projectName=e-grocery-${APP_DIR} \
                             -Dsonar.projectKey=ayushshakya84_e-grocery-${APP_DIR}
+                            -Dsonar.java.binaries=${env.WORKSPACE}/${env.APP_DIR}/target/classes
                             '''
                         }
                     }
