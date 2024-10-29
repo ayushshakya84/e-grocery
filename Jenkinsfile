@@ -22,6 +22,7 @@ pipeline {
     }
     
     environment  {
+        SCANNER_HOME=tool 'sonar-scanner'
         AWS_ACCOUNT_ID = credentials('AWS_ACCOUNT_ID')
         AWS_DEFAULT_REGION = 'ap-south-1'
         REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/"
@@ -37,6 +38,41 @@ pipeline {
                     env.AWS_ECR_REPO_NAME = "ecr-e-grocery-${APP_DIR}" 
                     echo "Detected application directory: ${APP_DIR}"
                     echo "${AWS_ECR_REPO_NAME}"
+                }
+            }
+        }
+        
+        stage('Sonarqube Analysis') {
+            when {
+                expression {
+                    return sh(script: "git diff --name-only HEAD~1 HEAD | grep '^${APP_DIR}/'", returnStatus: true) == 0
+                }
+            }
+            steps {
+                container('docker') {
+                    dir("${env.WORKSPACE}/${env.APP_DIR}") {
+                        withSonarQubeEnv('sonar-server') {
+                            sonar-scanner \
+                               -Dsonar.organization=ayushshakya84 \
+                               -Dsonar.projectName=e-grocery-${APP_DIR}
+                               -Dsonar.projectKey=ayushshakya84_e-grocery-${APP_DIR} \
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Quality Check') {
+            when {
+                expression {
+                    return sh(script: "git diff --name-only HEAD~1 HEAD | grep '^${APP_DIR}/'", returnStatus: true) == 0
+                }
+            }
+            steps {
+                container('docker') {
+                    script {
+                        waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token'
+                    }
                 }
             }
         }
@@ -103,7 +139,6 @@ pipeline {
                         script {
                             sh """
                             echo "Pushing Image of ${APP_DIR} service"
-                            echo "${AWS_ECR_REPO_NAME}"
                             aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${REPOSITORY_URI}
                             docker push ${REPOSITORY_URI}${AWS_ECR_REPO_NAME}:${BUILD_NUMBER}
                             """
