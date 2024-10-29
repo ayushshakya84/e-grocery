@@ -1,5 +1,5 @@
 pipeline {
-    agent {
+        agent {
         kubernetes {
             yaml """
             apiVersion: v1
@@ -20,91 +20,104 @@ pipeline {
             """
         }
     }
-    
-    environment  {
+
+    environment {
         AWS_ACCOUNT_ID = credentials('AWS_ACCOUNT_ID')
-        AWS_ECR_REPO_NAME = credentials('ecr-e-grocery-order')
         AWS_DEFAULT_REGION = 'ap-south-1'
         REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/"
     }
 
     stages {
-        stage('Determine App Directory') {
-            steps {
-                script {
-                    def changedDirs = sh(script: "git diff --name-only HEAD~1 HEAD", returnStdout: true).trim().tokenize('\n').collect { it.split('/')[0] }.unique()
-                    APP_DIR = changedDirs.find { it in ['gateway', 'notification', 'order', 'odersaga', 'payment', 'product', 'profile', 'search', 'shipment'] }
-                    env.APP_DIR = APP_DIR // Set the environment variable
-                    echo "Detected application directory: ${APP_DIR}"
-                }
-            }
-        }
-
-        stage('Package Build') {
+        stage('Order Service Build') {
             when {
-                expression {
-                    return sh(script: "git diff --name-only HEAD~1 HEAD | grep '^${JOB_NAME}/'", returnStatus: true) == 0
-                }
+                expression { sh(script: "git diff --name-only HEAD~1 HEAD | grep '^order/'", returnStatus: true) == 0 }
             }
-            steps {
-                container('maven') {
-                    script {
-                        dir('lib/') {
-                            sh '''
-                            bash script.sh
-                            '''
+            stages {
+                stage('Package Build') {
+                    steps {
+                        container('maven') {
+                            dir('order') {
+                                sh 'mvn clean package'
+                            }
                         }
-                        dir("${env.WORKSPACE}/${env.APP_DIR}") {
-                            sh ''' 
-                            mvn clean package
-                            '''
+                    }
+                }
+
+                stage('Docker Build & Push') {
+                    steps {
+                        container('docker') {
+                            script {
+                                sh """
+                                docker build -t ${REPOSITORY_URI}order:${BUILD_NUMBER} order/
+                                docker push ${REPOSITORY_URI}order:${BUILD_NUMBER}
+                                """
+                            }
                         }
                     }
                 }
             }
         }
 
-        stage("Docker Image Build") {
+        stage('Payment Service Build') {
             when {
-                expression {
-                    return sh(script: "git diff --name-only HEAD~1 HEAD | grep '^${JOB_NAME}/'", returnStatus: true) == 0
-                }
+                expression { sh(script: "git diff --name-only HEAD~1 HEAD | grep '^payment/'", returnStatus: true) == 0 }
             }
-            steps {
-                container('docker') {
-                    script {
-                        dir("${env.WORKSPACE}/${env.APP_DIR}") {
-                            sh """ 
-                            dockerd &
-                            sleep 2
-                            docker system prune -f
-                            docker container prune -f
-                            docker build -t ${REPOSITORY_URI}${AWS_ECR_REPO_NAME}:${BUILD_NUMBER} .
-                            """
+            stages {
+                stage('Package Build') {
+                    steps {
+                        container('maven') {
+                            dir('payment') {
+                                sh 'mvn clean package'
+                            }
+                        }
+                    }
+                }
+
+                stage('Docker Build & Push') {
+                    steps {
+                        container('docker') {
+                            script {
+                                sh """
+                                docker build -t ${REPOSITORY_URI}payment:${BUILD_NUMBER} payment/
+                                docker push ${REPOSITORY_URI}payment:${BUILD_NUMBER}
+                                """
+                            }
                         }
                     }
                 }
             }
         }
 
-        stage("ECR Image Pushing") {
+        stage('Inventory Service Build') {
             when {
-                expression {
-                    return sh(script: "git diff --name-only HEAD~1 HEAD | grep '^${JOB_NAME}/'", returnStatus: true) == 0
-                }
+                expression { sh(script: "git diff --name-only HEAD~1 HEAD | grep '^inventory/'", returnStatus: true) == 0 }
             }
-            steps {
-                container('docker') {
-                    withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws-cred', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-                        script {
-                            sh """ 
-                            aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${REPOSITORY_URI}
-                            docker push ${REPOSITORY_URI}${AWS_ECR_REPO_NAME}:${BUILD_NUMBER}
-                            """
+            stages {
+                stage('Package Build') {
+                    steps {
+                        container('maven') {
+                            dir('inventory') {
+                                sh 'mvn clean package'
+                            }
+                        }
+                    }
+                }
+
+                stage('Docker Build & Push') {
+                    steps {
+                        container('docker') {
+                            script {
+                                sh """
+                                docker build -t ${REPOSITORY_URI}inventory:${BUILD_NUMBER} inventory/
+                                docker push ${REPOSITORY_URI}inventory:${BUILD_NUMBER}
+                                """
+                            }
                         }
                     }
                 }
             }
         }
+
+        // Add more stages for additional services if needed
     }
 }
