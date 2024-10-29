@@ -63,7 +63,7 @@ pipeline {
             when {
                changeset "**/payment/*.*"
                beforeAgent true
-            }}
+            }
             stages {
                 stage('Build Payment Service') {
                     steps {
@@ -120,7 +120,6 @@ pipeline {
                 }
             }
         }
-
-        // Add more stages for other microservices following the same structure
     }
 }
+        // Add more stages for other microservices following the same structure
