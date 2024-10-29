@@ -11,6 +11,7 @@ spring:
     driver-class-name: org.postgresql.Driver
     name: main
     #this is commend test
+    #This is test line
   rabbitmq:
     host: ${rabbitmq_host:}
     port: ${rabbitmq_port:}
