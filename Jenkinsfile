@@ -30,7 +30,8 @@ pipeline {
     stages {
         stage('Order Service') {
             when {
-                expression { sh(script: "git diff --name-only HEAD~1 HEAD | grep '^order/'", returnStatus: true) == 0 }
+               changeset "**/order/*.*"
+                beforeAgent true
             }
             stages {
                 stage('Build Order Service') {
@@ -60,8 +61,9 @@ pipeline {
 
         stage('Payment Service') {
             when {
-                expression { sh(script: "git diff --name-only HEAD~1 HEAD | grep '^payment/'", returnStatus: true) == 0 }
-            }
+               changeset "**/payment/*.*"
+               beforeAgent true
+            }}
             stages {
                 stage('Build Payment Service') {
                     steps {
@@ -90,7 +92,8 @@ pipeline {
 
         stage('Inventory Service') {
             when {
-                expression { sh(script: "git diff --name-only HEAD~1 HEAD | grep '^inventory/'", returnStatus: true) == 0 }
+               changeset "**/Inventory/*.*"
+                beforeAgent true
             }
             stages {
                 stage('Build Inventory Service') {
