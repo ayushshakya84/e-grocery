@@ -13,7 +13,7 @@ pipeline {
                 securityContext:
                   privileged: true
               - name: maven
-                image: maven:3.6.3-jdk-11
+                image: maven:3.6.3-jdk-14
                 command:
                 - cat
                 tty: true
@@ -75,8 +75,8 @@ pipeline {
                 }
             }
             steps {
-                container('docker') {
-                    dir("${env.WORKSPACE}/${env.APP_DIR}") {
+                container('maven') {
+                    dir("${env.WORKSPACE}/${env.APP_DIR}/target/classes") {
                         withSonarQubeEnv('sonar-server') {
                             sh ''' 
                             apt-get update && apt-get install -y openjdk-17-jdk
@@ -85,7 +85,6 @@ pipeline {
                             -Dsonar.organization=ayushshakya84 \
                             -Dsonar.projectName=e-grocery-${APP_DIR} \
                             -Dsonar.projectKey=ayushshakya84_e-grocery-${APP_DIR}
-                            -Dsonar.java.binaries=${env.WORKSPACE}/${env.APP_DIR}/target/classes
                             '''
                         }
                     }
@@ -100,7 +99,7 @@ pipeline {
                 }
             }
             steps {
-                container('docker') {
+                container('maven') {
                     script {
                         waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token'
                     }
