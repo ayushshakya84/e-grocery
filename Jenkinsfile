@@ -52,10 +52,12 @@ pipeline {
                 container('docker') {
                     dir("${env.WORKSPACE}/${env.APP_DIR}") {
                         withSonarQubeEnv('sonar-server') {
-                                sh ''' $SCANNER_HOME/bin/sonar-scanner \
-                               -Dsonar.organization=ayushshakya84 \
-                               -Dsonar.projectName=e-grocery-${APP_DIR}
-                               -Dsonar.projectKey=ayushshakya84_e-grocery-${APP_DIR} \
+                            sh ''' 
+                            $SCANNER_HOME/bin/sonar-scanner \
+                            -Dsonar.organization=ayushshakya84 \
+                            -Dsonar.projectName=e-grocery-${APP_DIR} \
+                            -Dsonar.projectKey=ayushshakya84_e-grocery-${APP_DIR}
+                            '''
                         }
                     }
                 }
