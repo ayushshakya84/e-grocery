@@ -13,7 +13,7 @@ pipeline {
                 securityContext:
                   privileged: true
               - name: maven
-                image: aven:3.6.3-jdk-13
+                image: maven:3.6.3-jdk-13
                 command:
                 - cat
                 tty: true
