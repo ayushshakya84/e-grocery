@@ -23,7 +23,7 @@ pipeline {
     
     environment  {
         AWS_ACCOUNT_ID = credentials('AWS_ACCOUNT_ID')
-        AWS_ECR_REPO_NAME = credentials('ecr-e-grocery-${JOB_NAME}')
+        AWS_ECR_REPO_NAME = credentials('ecr-e-grocery-order')
         AWS_DEFAULT_REGION = 'ap-south-1'
         REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/"
     }
