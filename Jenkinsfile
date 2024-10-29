@@ -13,7 +13,7 @@ pipeline {
                 securityContext:
                   privileged: true
               - name: maven
-                image: maven:3.6.3-jdk-11
+                image: maven:3.8.5-openjdk-17
                 command:
                 - cat
                 tty: true
@@ -53,6 +53,7 @@ pipeline {
                     dir("${env.WORKSPACE}/${env.APP_DIR}") {
                         withSonarQubeEnv('sonar-server') {
                             sh ''' 
+                            java -version
                             $SCANNER_HOME/bin/sonar-scanner \
                             -Dsonar.organization=ayushshakya84 \
                             -Dsonar.projectName=e-grocery-${APP_DIR} \
