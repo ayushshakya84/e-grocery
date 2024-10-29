@@ -103,6 +103,7 @@ pipeline {
                         script {
                             sh """
                             echo "Pushing Image of ${APP_DIR} service"
+                            echo "${AWS_ECR_REPO_NAME}"
                             aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${REPOSITORY_URI}
                             docker push ${REPOSITORY_URI}${AWS_ECR_REPO_NAME}:${BUILD_NUMBER}
                             """
