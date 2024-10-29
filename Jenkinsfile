@@ -74,14 +74,13 @@ pipeline {
                     return sh(script: "git diff --name-only HEAD~1 HEAD | grep '^${APP_DIR}/'", returnStatus: true) == 0
                 }
             }
-            tools {
-                jdk 'jdk'
-            }
+        }
             steps {
                 container('docker') {
                     dir("${env.WORKSPACE}/${env.APP_DIR}") {
                         withSonarQubeEnv('sonar-server') {
                             sh ''' 
+                            apt-get update && apt-get install -y openjdk-11-jdk
                             java -version
                             $SCANNER_HOME/bin/sonar-scanner \
                             -Dsonar.organization=ayushshakya84 \
