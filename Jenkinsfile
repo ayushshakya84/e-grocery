@@ -23,7 +23,6 @@ pipeline {
     
     environment  {
         AWS_ACCOUNT_ID = credentials('AWS_ACCOUNT_ID')
-        AWS_ECR_REPO_NAME = credentials('ecr-e-grocery-order')
         AWS_DEFAULT_REGION = 'ap-south-1'
         REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/"
     }
@@ -35,7 +34,9 @@ pipeline {
                     def changedDirs = sh(script: "git diff --name-only HEAD~1 HEAD", returnStdout: true).trim().tokenize('\n').collect { it.split('/')[0] }.unique()
                     APP_DIR = changedDirs.find { it in ['gateway', 'notification', 'order', 'odersaga', 'payment', 'product', 'profile', 'search', 'shipment'] }
                     env.APP_DIR = APP_DIR // Set the environment variable
+                    env.APP_DIR = AWS_ECR_REPO_NAME
                     echo "Detected application directory: ${APP_DIR}"
+                    echo "${AWS_ECR_REPO_NAME}"
                 }
             }
         }
