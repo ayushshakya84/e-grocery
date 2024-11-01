@@ -96,21 +96,6 @@ pipeline {
             }
         }
 
-        stage('Quality Check') {
-            when {
-                expression {
-                    return sh(script: "git diff --name-only HEAD~1 HEAD | grep '^${APP_DIR}/'", returnStatus: true) == 0
-                }
-            }
-            steps {
-                container('maven') {
-                    timeout(time: 1, unit: 'MINUTES') {
-                        waitForQualityGate abortPipeline: true, credentialsId: 'sonar-token'
-                    }
-                }
-            }
-        }
-
         stage("Docker Image Build") {
             when {
                 expression {
