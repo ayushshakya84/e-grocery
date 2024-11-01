@@ -2,13 +2,24 @@ pipeline {
     agent none  // Disable global agent as each parallel branch will use its own pod
 
     environment  {
-        SCANNER_HOME = tool 'sonar-scanner'
         AWS_ACCOUNT_ID = credentials('AWS_ACCOUNT_ID')
         AWS_DEFAULT_REGION = 'ap-south-1'
         REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/"
     }
 
     stages {
+        stage('Setup') {
+            agent any
+            steps {
+                script {
+                    node {
+                        // Set up Sonar Scanner tool
+                        env.SCANNER_HOME = tool 'sonar-scanner'
+                    }
+                }
+            }
+        }
+
         stage('Determine Changed App Directories') {
             agent any
             steps {
