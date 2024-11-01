@@ -89,11 +89,7 @@ pipeline {
                             ls target/**
                             ls -R target/classes
                             java -version
-                            $SCANNER_HOME/bin/sonar-scanner \
-                            -Dsonar.organization=ayushshakya84 \
-                            -Dsonar.projectName=e-grocery-${APP_DIR} \
-                            -Dsonar.projectKey=ayushshakya84_e-grocery-${APP_DIR}
-                            -Dsonar.java.binaries=target/classes
+                            mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=ayushshakya84_e-grocery-${APP_DIR}
                             '''
                         }
                     }
