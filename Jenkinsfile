@@ -28,9 +28,6 @@ pipeline {
         REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/"
     }
 
-    tools {
-    jdk 'jdk'
-    }
 
     stages {
         stage('Determine App Directory') {
@@ -79,7 +76,7 @@ pipeline {
                 }
             }
             environment {
-                JAVA_HOME = "${tool 'jdk17'}"
+                JAVA_HOME = "${tool 'jdk'}"
                 PATH = "${JAVA_HOME}/bin:${env.PATH}"
             }
             steps {
