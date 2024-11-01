@@ -96,6 +96,21 @@ pipeline {
             }
         }
 
+        stage('Trivy File Scan') {
+            when {
+                expression {
+                    return sh(script: "git diff --name-only HEAD~1 HEAD | grep '^${APP_DIR}/'", returnStatus: true) == 0
+                }
+            }
+            steps {
+                container('docker') {
+                    dir("${env.WORKSPACE}/${env.APP_DIR}") {
+                        sh 'trivy fs . > trivyfs.txt'
+                    }
+                }
+            }
+        }
+
         stage("Docker Image Build") {
             when {
                 expression {
@@ -116,6 +131,15 @@ pipeline {
                             """
                         }
                     }
+                }
+            }
+        }
+
+        stage("TRIVY Image Scan") {
+            
+            steps {
+                container('docker') {
+                    sh 'trivy image ${REPOSITORY_URI}${AWS_ECR_REPO_NAME}:${BUILD_NUMBER} > trivyimage.txt'
                 }
             }
         }
