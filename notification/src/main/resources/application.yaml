@@ -1,6 +1,6 @@
 server:
   port: 8088
-
+#This is a last test
 spring:
   application:
     name: notification
