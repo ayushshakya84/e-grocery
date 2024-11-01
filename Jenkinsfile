@@ -62,6 +62,7 @@ pipeline {
                             sh ''' 
                             echo "Building package for ${APP_DIR} service"
                             mvn clean package
+                            ls -R target/classes
                             '''
                         }
                     }
@@ -86,6 +87,7 @@ pipeline {
                             sh ''' 
                             pwd
                             ls target/**
+                            ls -R target/classes
                             java -version
                             $SCANNER_HOME/bin/sonar-scanner \
                             -Dsonar.organization=ayushshakya84 \
