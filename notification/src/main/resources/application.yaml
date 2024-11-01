@@ -1,6 +1,6 @@
 server:
   port: 8088
-  
+ #this is new line added because jenkins 
 spring:
   application:
     name: notification
