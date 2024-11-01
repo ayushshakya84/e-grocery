@@ -85,6 +85,7 @@ pipeline {
                         withSonarQubeEnv('sonar-server') {
                             sh ''' 
                             pwd
+                            ls -al
                             java -version
                             $SCANNER_HOME/bin/sonar-scanner \
                             -Dsonar.organization=ayushshakya84 \
