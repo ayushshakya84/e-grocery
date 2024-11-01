@@ -29,7 +29,7 @@ pipeline {
     }
 
     tools {
-    jdk 'jdk17'
+    jdk 'jdk'
     }
 
     stages {
