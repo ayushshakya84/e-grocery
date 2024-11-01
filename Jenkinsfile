@@ -28,6 +28,10 @@ pipeline {
         REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/"
     }
 
+    tools {
+    jdk 'jdk17'
+    }
+
     stages {
         stage('Determine App Directory') {
             steps {
@@ -73,6 +77,10 @@ pipeline {
                 expression {
                     return sh(script: "git diff --name-only HEAD~1 HEAD | grep '^${APP_DIR}/'", returnStatus: true) == 0
                 }
+            }
+            environment {
+                JAVA_HOME = "${tool 'jdk17'}"
+                PATH = "${JAVA_HOME}/bin:${env.PATH}"
             }
             steps {
                 container('maven') {
