@@ -62,7 +62,6 @@ pipeline {
                             sh ''' 
                             echo "Building package for ${APP_DIR} service"
                             mvn clean package
-                            ls -R target/classes
                             '''
                         }
                     }
@@ -105,7 +104,7 @@ pipeline {
             }
             steps {
                 container('maven') {
-                    script {
+                    timeout(time: 1, unit: 'MINUTES') {
                         waitForQualityGate abortPipeline: true, credentialsId: 'sonar-token'
                     }
                 }
