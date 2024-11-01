@@ -17,10 +17,7 @@
 	<properties>
 		<java.version>11</java.version>
 		<testcontainers.version>1.15.1</testcontainers.version>
-
-	</properties>
-	<properties>
- 		<sonar.organization>ayushshakya84</sonar.organization>
+		<sonar.organization>ayushshakya84</sonar.organization>
   		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 	</properties>
 
