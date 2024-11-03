@@ -188,7 +188,7 @@ pipeline {
                                 yq -y -i ".image.tag = \\"${BUILD_NUMBER}\\"" notification/values.yaml
                                 git add notification/values.yaml
                                 git commit -m "Update deployment Image to version \${BUILD_NUMBER}"
-                                git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:${BRANCH_NAME}
+                                git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:main
                                 echo $?
                             '''
                         }
