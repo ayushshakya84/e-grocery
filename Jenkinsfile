@@ -184,7 +184,7 @@ pipeline {
                                 echo $BUILD_NUMBER
                                 git pull --rebase https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} ${BRANCH_NAME} || git rebase --abort
                                 ls
-                                yq e -i '.image.tag = env(BUILD_NUMBER)' ${APP_DIR}/values.yaml
+                                yq e -i '.image.tag = env(BUILD_NUMBER)' notification/values.yaml
                                 git add deployment.yaml
                                 git commit -m "Update deployment Image to version \${BUILD_NUMBER}"
                                 git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:${BRANCH_NAME}
