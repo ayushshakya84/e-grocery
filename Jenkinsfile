@@ -182,7 +182,7 @@ pipeline {
                                 git config user.name ${GIT_USER_NAME}
                                 BUILD_NUMBER=${BUILD_NUMBER}
                                 echo $BUILD_NUMBER
-                                git pull --rebase https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} ${BRANCH_NAME} || git rebase --abort
+                                git pull  https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} ${BRANCH_NAME}
                                 ls
                                 yq e -i '.image.tag = env(BUILD_NUMBER)' notification/values.yaml
                                 git add deployment.yaml
