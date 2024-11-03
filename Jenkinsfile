@@ -174,9 +174,9 @@ pipeline {
             }
             steps {
                 container('docker') {
+                    cleanWs() 
                     dir("${env.WORKSPACE}/${env.APP_DIR}") {
                         withCredentials([string(credentialsId: 'GIT_TOKEN', variable: 'GITHUB_TOKEN')]) {
-                            cleanWs()
                             sh '''
                                 git config --global --add safe.directory /home/jenkins/agent/workspace/${JOB_NAME}
                                 git config user.email ${GIT_USER_EMAIL}
