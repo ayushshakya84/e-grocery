@@ -183,7 +183,7 @@ pipeline {
                                 BUILD_NUMBER=${BUILD_NUMBER}
                                 echo $BUILD_NUMBER
                                 git pull --rebase https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} ${BRANCH_NAME} || git rebase --abort
-                                ls **/**
+                                ls
                                 yq e -i '.image.tag = env(BUILD_NUMBER)' ${APP_DIR}/values.yaml
                                 git add deployment.yaml
                                 git commit -m "Update deployment Image to version \${BUILD_NUMBER}"
