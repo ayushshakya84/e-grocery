@@ -8,7 +8,7 @@ pipeline {
               serviceAccountName: jenkins
               containers:
               - name: docker
-                image: ayush8410/docker-aws-trivy:v1
+                image: ayush8410/docker-aws-trivy:v2
                 tty: true
                 securityContext:
                   privileged: true
@@ -160,6 +160,36 @@ pipeline {
                             aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${REPOSITORY_URI}
                             docker push ${REPOSITORY_URI}${AWS_ECR_REPO_NAME}:${BUILD_NUMBER}
                             """
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Update Deployment file') {
+            environment {
+                GIT_REPO_NAME = "e-grocery-k8s-infra"
+                GIT_USER_NAME = "ayushshakya84"
+                GIT_USER_EMAIL = "ayushshakya8410@gmail.com"
+            }
+            steps {
+                container('docker') {
+                    dir("${env.WORKSPACE}/${env.APP_DIR}") {
+                        withCredentials([string(credentialsId: 'GIT_TOKEN', variable: 'GITHUB_TOKEN')]) {
+                            sh '''
+                                git config --global --add safe.directory /home/jenkins/agent/workspace/${JOB_NAME}
+                                git config user.email ${GIT_USER_EMAIL}
+                                git config user.name ${GIT_USER_NAME}
+                                BUILD_NUMBER=${BUILD_NUMBER}
+                                echo $BUILD_NUMBER
+                                git pull --rebase https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} ${BRANCH_NAME} || git rebase --abort
+                             // sed -i "s/${AWS_ECR_REPO_NAME}:${imageTag}/${AWS_ECR_REPO_NAME}:${BUILD_NUMBER}/" deployment.yaml
+                                yq e -i '.image.tag = env(BUILD_NUMBER)' ${APP_DIR}/values.yaml 
+                                git add deployment.yaml
+                                git commit -m "Update deployment Image to version \${BUILD_NUMBER}"
+                                git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:${BRANCH_NAME}
+                                echo $?
+                            '''
                         }
                     }
                 }
