@@ -164,6 +164,12 @@ pipeline {
                     }
                 }
             }
+            post {
+                always {
+                    // Clean workspace after the Deploy stage
+                    cleanWs()
+                }
+            }
         }
 
         stage('Update Deployment file') {
