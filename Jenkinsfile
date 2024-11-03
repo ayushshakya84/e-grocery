@@ -175,7 +175,7 @@ pipeline {
             steps {
                 container('docker') {
                     cleanWs() 
-                    dir("${env.WORKSPACE}/${env.APP_DIR}") {
+                    dir("${env.WORKSPACE}/e-grocery-k8s-infra") {
                         withCredentials([string(credentialsId: 'GIT_TOKEN', variable: 'GITHUB_TOKEN')]) {
                             git credentialsId: 'GITHUB_CRED', url: 'https://github.com/ayushshakya84/e-grocery-k8s-infra.git', branch: 'main'
                             sh '''         
@@ -186,7 +186,7 @@ pipeline {
                                 echo $BUILD_NUMBER
                                 ls
                                 yq e -i '.image.tag = env(BUILD_NUMBER)' notification/values.yaml
-                                git add deployment.yaml
+                                git add notification/values.yaml
                                 git commit -m "Update deployment Image to version \${BUILD_NUMBER}"
                                 git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:${BRANCH_NAME}
                                 echo $?
