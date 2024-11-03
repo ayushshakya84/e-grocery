@@ -177,7 +177,7 @@ pipeline {
                     cleanWs() 
                     dir("${env.WORKSPACE}/${env.APP_DIR}") {
                         withCredentials([string(credentialsId: 'GIT_TOKEN', variable: 'GITHUB_TOKEN')]) {
-                            git credentialsId: 'GITHUB_CRED', url: 'https://github.com/ayushshakya84/e-grocery-k8s-infra.git' "main"
+                            git credentialsId: 'GITHUB_CRED', url: 'https://github.com/ayushshakya84/e-grocery-k8s-infra.git', branch: 'main'
                             sh '''         
                                 git config --global --add safe.directory /home/jenkins/agent/workspace/${JOB_NAME}
                                 git config user.email ${GIT_USER_EMAIL}
