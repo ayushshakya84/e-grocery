@@ -185,7 +185,7 @@ pipeline {
                                 BUILD_NUMBER=${BUILD_NUMBER}
                                 echo $BUILD_NUMBER
                                 ls
-                                yq e -i '.image.tag = env(BUILD_NUMBER)' notification/values.yaml
+                                yq -y -i '.image.tag = env(BUILD_NUMBER)' notification/values.yaml
                                 git add notification/values.yaml
                                 git commit -m "Update deployment Image to version \${BUILD_NUMBER}"
                                 git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:${BRANCH_NAME}
