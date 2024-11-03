@@ -17,7 +17,8 @@
 	<properties>
 		<java.version>11</java.version>
 		<testcontainers.version>1.15.1</testcontainers.version>
-
+		<sonar.organization>e-grocery</sonar.organization>
+  		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 	</properties>
 
 	<dependencies>

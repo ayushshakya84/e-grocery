@@ -56,6 +56,7 @@ pipeline {
                             sh '''
                             echo "Installing Dependencies for ${APP_DIR} service"
                             bash script.sh
+                            yq
                             '''
                         }
                         dir("${env.WORKSPACE}/${env.APP_DIR}") {
@@ -84,10 +85,6 @@ pipeline {
                     dir("${env.WORKSPACE}/${env.APP_DIR}") {
                         withSonarQubeEnv('sonar-server') {
                             sh ''' 
-                            pwd
-                            ls target/**
-                            ls -R target/classes
-                            java -version
                             mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=ayushshakya84_e-grocery-${APP_DIR}
                             '''
                         }
@@ -106,6 +103,7 @@ pipeline {
                 container('docker') {
                     dir("${env.WORKSPACE}/${env.APP_DIR}") {
                         sh 'trivy fs . > trivyfs.txt'
+                        sh 'yq'
                     }
                 }
             }
