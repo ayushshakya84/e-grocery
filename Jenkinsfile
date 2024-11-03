@@ -179,7 +179,7 @@ pipeline {
                         withCredentials([string(credentialsId: 'GIT_TOKEN', variable: 'GITHUB_TOKEN')]) {
                             git credentialsId: 'GITHUB_CRED', url: 'https://github.com/ayushshakya84/e-grocery-k8s-infra.git', branch: 'main'
                             sh '''         
-                                git config --global --add safe.directory /home/jenkins/agent/workspace/${JOB_NAME}
+                                git config --global --add safe.directory $(pwd)
                                 git config user.email ${GIT_USER_EMAIL}
                                 git config user.name ${GIT_USER_NAME}
                                 BUILD_NUMBER=${BUILD_NUMBER}
