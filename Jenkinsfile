@@ -56,7 +56,6 @@ pipeline {
                             sh '''
                             echo "Installing Dependencies for ${APP_DIR} service"
                             bash script.sh
-                            yq
                             '''
                         }
                         dir("${env.WORKSPACE}/${env.APP_DIR}") {
