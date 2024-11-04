@@ -12,7 +12,7 @@ zuul:
   routes.shipments.url: ${SHIPMENTS_URL:http://localhost:8085}
   routes.profiles.url: ${PROFILES_URL:http://localhost:8086}
   routes.search.url: ${SEARCH_URL:http://localhost:8087}
-
+#ENV for keycloak
 keycloak:
   auth-server-url: ${KEYCLOAK_AUTH_URL:http://localhost:8090/auth}
   realm: ${KEYCLOAK_REALM_NAME:E-GROCERY:}
