@@ -34,7 +34,7 @@ pipeline {
             steps {
                 script {
                     def changedDirs = sh(script: "git diff --name-only HEAD~1 HEAD", returnStdout: true).trim().tokenize('\n').collect { it.split('/')[0] }.unique()
-                    APP_DIR = changedDirs.find { it in ['gateway', 'notification', 'order', 'odersaga', 'payment', 'product', 'profile', 'search', 'shipment'] }
+                    APP_DIR = changedDirs.find { it in ['gateway', 'notification', 'order', 'ordersaga', 'payment', 'product', 'profile', 'search', 'shipment'] }
                     env.APP_DIR = APP_DIR // Set the environment variable
                     env.AWS_ECR_REPO_NAME = "e-grocery/${APP_DIR}" 
                     echo "Detected application directory: ${APP_DIR}"
