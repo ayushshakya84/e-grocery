@@ -167,6 +167,11 @@ pipeline {
         }
 
         stage('Update Deployment file') {
+            when {
+                expression {
+                    return sh(script: "git diff --name-only HEAD~1 HEAD | grep '^${APP_DIR}/'", returnStatus: true) == 0
+                }
+            }
             environment {
                 GIT_REPO_NAME = "e-grocery-k8s-infra"
                 GIT_USER_NAME = "ayushshakya84"
@@ -190,7 +195,6 @@ pipeline {
                                 git add main-app-values/${APP_DIR}/values.yaml
                                 git commit -m "Update deployment Image to version \${BUILD_NUMBER}"
                                 git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:${GIT_BRANCH}
-                                echo $?
                             '''
                         }
                     }
