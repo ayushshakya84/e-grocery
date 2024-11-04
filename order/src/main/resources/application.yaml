@@ -1,5 +1,6 @@
 server:
   port: 8082
+#env for database
 spring:
   application.name: order
   liquibase:

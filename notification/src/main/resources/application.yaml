@@ -1,6 +1,6 @@
 server:
   port: 8088
-
+#env for database
 spring:
   application:
     name: notification
