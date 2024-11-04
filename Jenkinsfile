@@ -171,13 +171,14 @@ pipeline {
                 GIT_REPO_NAME = "e-grocery-k8s-infra"
                 GIT_USER_NAME = "ayushshakya84"
                 GIT_USER_EMAIL = "ayushshakya8410@gmail.com"
+                GIT_BRANCH = "main"
             }
             steps {
                 container('docker') {
                     cleanWs() 
                     dir("${env.WORKSPACE}/e-grocery-k8s-infra") {
                         withCredentials([string(credentialsId: 'GIT_TOKEN', variable: 'GITHUB_TOKEN')]) {
-                            git credentialsId: 'GITHUB_CRED', url: 'https://github.com/ayushshakya84/e-grocery-k8s-infra.git', branch: 'main'
+                            git credentialsId: 'GITHUB_CRED', url: 'https://github.com/ayushshakya84/e-grocery-k8s-infra.git', branch: "${env.GIT_BRANCH}"
                             sh '''         
                                 git config --global --add safe.directory $(pwd)
                                 git config user.email ${GIT_USER_EMAIL}
@@ -185,10 +186,10 @@ pipeline {
                                 BUILD_NUMBER=${BUILD_NUMBER}
                                 echo $BUILD_NUMBER
                                 ls
-                                yq -y -i ".image.tag = \\"${BUILD_NUMBER}\\"" notification/values.yaml
-                                git add notification/values.yaml
+                                yq -y -i ".image.tag = \\"${BUILD_NUMBER}\\"" main-app-values/${APP_DIR}/values.yaml
+                                git add main-app-values/${APP_DIR}/values.yaml
                                 git commit -m "Update deployment Image to version \${BUILD_NUMBER}"
-                                git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:main
+                                git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:${GIT_BRANCH}
                                 echo $?
                             '''
                         }
