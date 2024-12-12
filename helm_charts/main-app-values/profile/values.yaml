@@ -1,0 +1,40 @@
+replicaCount: 1
+
+image:
+  repository: 183631348362.dkr.ecr.ap-south-1.amazonaws.com/e-grocery/profile
+  tag: "1.0.0"
+
+env:
+- name: KEYCLOAK_REALM_NAME
+  value:
+- name: KEYCLOAK_SERVER_URL
+  value:
+- name: KEYCLOAK_ADMIN_USERNAME
+  value:
+- name: KEYCLOAK_ADMIN_PASSWORD
+  value:
+
+service:
+  name: web
+  type: ClusterIP
+  port: 8086
+  targetport: 8086
+  protocol: TCP
+
+livenessProbe:
+  httpGet:
+    path: /actuator/health/liveness
+    port: web
+    scheme: HTTP
+  initialDelaySeconds: 60
+  periodSeconds: 60
+  failureThreshold: 5
+
+readinessProbe:
+  httpGet:
+    path: /actuator/health/readiness
+    port: web
+    scheme: HTTP
+  initialDelaySeconds: 60
+  periodSeconds: 60
+  failureThreshold: 5

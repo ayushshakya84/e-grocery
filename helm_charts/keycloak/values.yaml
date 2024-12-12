@@ -1,0 +1,26 @@
+replicaCount: 1
+
+image:
+  repository: vyacheslavoleshko/e-grocery-keycloak
+  tag: 1.0.0
+
+service:
+  type: NodePort
+  port: 8080
+  nodePort: 30080
+
+keycloak:
+  realm: KeycloakRealm
+  admin:
+    username: admin
+    password: admin
+  db:
+    username: postgres
+    password: password
+
+postgresql:
+  postgresqlDatabase: keycloak-db
+  postgresqlUsername: postgres
+  postgresqlPassword: password
+  service:
+    port: 5432
