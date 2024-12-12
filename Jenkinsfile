@@ -102,7 +102,6 @@ pipeline {
                 container('docker') {
                     dir("${env.WORKSPACE}/${env.APP_DIR}") {
                         sh 'trivy fs . > trivyfs.txt'
-                        sh 'yq'
                     }
                 }
             }
@@ -190,7 +189,6 @@ pipeline {
                                 git config user.name ${GIT_USER_NAME}
                                 BUILD_NUMBER=${BUILD_NUMBER}
                                 echo $BUILD_NUMBER
-                                ls
                                 yq -y -i ".image.tag = \\"${BUILD_NUMBER}\\"" main-app-values/${APP_DIR}/values.yaml
                                 git add main-app-values/${APP_DIR}/values.yaml
                                 git commit -m "Update deployment Image to version \${BUILD_NUMBER}"
