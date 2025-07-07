@@ -195,13 +195,17 @@ def runAppStages(appDir, mavenBuildCommand, trivy_file_scan, trivy_image_scan) {
     }
 
     stage("Trivy Image Scan - ${appDir}") {
+        container('gcloud') {
+            sh """
+            echo "Authenticating with GCP for image scanning"
+            gcloud auth activate-service-account --key-file=\${GOOGLE_APPLICATION_CREDENTIALS}
+            gcloud auth configure-docker \${REGISTRY_HOST}
+            """
+        }
+        
         container('trivy') {
             dir("${appDir}") {
                 sh """
-                echo "Authenticating with GCP for image scanning"
-                gcloud auth activate-service-account --key-file=\${GOOGLE_APPLICATION_CREDENTIALS}
-                gcloud auth configure-docker \${REGISTRY_HOST}
-                
                 echo "Running Trivy image scan"
                 trivy image ${REPOSITORY_URI}/${appDir}:${IMAGE_TAG} --format table --output trivy-image-report.txt || echo "Image scan completed with issues"
                 """
