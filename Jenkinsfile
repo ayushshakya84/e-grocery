@@ -225,38 +225,27 @@ def runAppStages(appDir, mavenBuildCommand, trivy_file_scan, trivy_image_scan) {
         }
     }
 
-    stage("Update Deployment Changes - ${appDir}") {
-        container('gcloud') {
-            script {
-                // Check if the current appDir has changes
-                def hasChanges = sh(
-                    script: "git diff --name-only HEAD~1 HEAD | grep '^${appDir}/' || true",
-                    returnStdout: true
-                ).trim()
-                
-                if (hasChanges) {
-                    cleanWs()
-                    dir("${env.WORKSPACE}/${env.UPDATE_DIR}") {
+    stage('Update Deployment file') {
+            steps {
+                container('gcloud') {
+                    cleanWs() 
+                    dir("${env.WORKSPACE}/e-grocery-k8s-infra") {
                         withCredentials([string(credentialsId: 'GIT_TOKEN', variable: 'GITHUB_TOKEN')]) {
-                            sh """
-                            git clone https://\${GITHUB_TOKEN}@github.com/\${GIT_USER_NAME}/\${GIT_REPO_NAME}.git .
-                            git config user.email \${GIT_USER_EMAIL}
-                            git config user.name \${GIT_USER_NAME}
-                            
-                            # Update the image tag in values.yaml
-                            yq -i ".image.tag = \\"\${IMAGE_TAG}\\"" main-app-values/${appDir}/values.yaml
-                            
-                            # Commit and push changes
-                            git add main-app-values/${appDir}/values.yaml
-                            git commit -m "Update ${appDir} deployment image to version \${IMAGE_TAG}"
-                            git push origin \${GIT_BRANCH}
-                            """
+                            git credentialsId: 'GITHUB_CRED', url: 'https://github.com/ayushshakya84/e-grocery-k8s-infra.git', branch: "${env.GIT_BRANCH}"
+                            sh '''         
+                                git config --global --add safe.directory $(pwd)
+                                git config user.email ${GIT_USER_EMAIL}
+                                git config user.name ${GIT_USER_NAME}
+                                BUILD_NUMBER=${IMAGE_TAG}
+                                echo $BUILD_NUMBER
+                                yq -y -i ".image.tag = \\"${BUILD_NUMBER}\\"" main-app-values/${APP_DIR}/values.yaml
+                                git add main-app-values/${APP_DIR}/values.yaml
+                                git commit -m "Update deployment Image to version \${BUILD_NUMBER}"
+                                git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:${GIT_BRANCH}
+                            '''
                         }
                     }
-                } else {
-                    echo "No changes detected for ${appDir}, skipping deployment update"
                 }
             }
-        }
     }
 }

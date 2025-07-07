@@ -1,7 +1,7 @@
 FROM openjdk:11.0.3-jre-slim
 
 ENV VERSION=1.0.0
-ENV PACKAGE_NAME="payment-${VERSION}"
+ENV PACKAGE_NAME="*"
 
 COPY target/${PACKAGE_NAME}.jar /opt/project/
 
