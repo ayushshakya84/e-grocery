@@ -1,0 +1,19 @@
+# Define applications
+application:
+  - gateway
+  - notification
+  - order
+  - ordersaga
+  - payment
+  - product
+  - profile
+  - search
+  - shipment
+
+# Build $ Scan commands
+maven:
+  build: "mvn clean package"
+
+trivy:
+  file_scan: "trivy fs --exit-code 0 --severity HIGH,CRITICAL ."
+  image_scan: "trivy image --exit-code 0 --severity HIGH,CRITICAL"
