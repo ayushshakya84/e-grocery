@@ -225,27 +225,26 @@ def runAppStages(appDir, mavenBuildCommand, trivy_file_scan, trivy_image_scan) {
         }
     }
 
-    stage('Update Deployment file') {
-            steps {
-                container('gcloud') {
-                    cleanWs() 
-                    dir("${env.WORKSPACE}/e-grocery-k8s-infra") {
-                        withCredentials([string(credentialsId: 'GIT_TOKEN', variable: 'GITHUB_TOKEN')]) {
-                            git credentialsId: 'GITHUB_CRED', url: 'https://github.com/ayushshakya84/e-grocery-k8s-infra.git', branch: "${env.GIT_BRANCH}"
-                            sh '''         
-                                git config --global --add safe.directory $(pwd)
-                                git config user.email ${GIT_USER_EMAIL}
-                                git config user.name ${GIT_USER_NAME}
-                                BUILD_NUMBER=${IMAGE_TAG}
-                                echo $BUILD_NUMBER
-                                yq -y -i ".image.tag = \\"${BUILD_NUMBER}\\"" main-app-values/${APP_DIR}/values.yaml
-                                git add main-app-values/${APP_DIR}/values.yaml
-                                git commit -m "Update deployment Image to version \${BUILD_NUMBER}"
-                                git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:${GIT_BRANCH}
-                            '''
-                        }
-                    }
-                }
+    stage("Update Deployment file - ${appDir}") {
+    container('gcloud') {
+        cleanWs()
+        dir("${env.WORKSPACE}/e-grocery-k8s-infra") {
+            withCredentials([string(credentialsId: 'GIT_TOKEN', variable: 'GITHUB_TOKEN')]) {
+                git credentialsId: 'GITHUB_CRED', url: 'https://github.com/ayushshakya84/e-grocery-k8s-infra.git', branch: "${env.GIT_BRANCH}"
+                sh """         
+                    git config --global --add safe.directory \$(pwd)
+                    git config user.email ${GIT_USER_EMAIL}
+                    git config user.name ${GIT_USER_NAME}
+                    BUILD_NUMBER=${IMAGE_TAG}
+                    echo \$BUILD_NUMBER
+                    yq -y -i ".image.tag = \\"${IMAGE_TAG}\\"" main-app-values/${appDir}/values.yaml
+                    git add main-app-values/${appDir}/values.yaml
+                    git commit -m "Update deployment Image to version \${BUILD_NUMBER}"
+                    git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:${GIT_BRANCH}
+                """
             }
+        }
+     }
     }
+
 }
