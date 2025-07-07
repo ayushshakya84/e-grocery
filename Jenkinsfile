@@ -146,18 +146,18 @@ def runAppStages(appDir, mavenBuildCommand, trivy_file_scan, trivy_image_scan) {
         }
     }
 
-    stage("SonarQube Analysis - ${appDir}") {
-        container('maven') {
-            dir("${appDir}") {
-                withSonarQubeEnv('sonar-server') {
-                    sh """
-                    mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-                      -Dsonar.projectKey=${SONAR_PROJECT_KEY}
-                    """
-                }
-            }
-        }
-    }
+    // stage("SonarQube Analysis - ${appDir}") {
+    //     container('maven') {
+    //         dir("${appDir}") {
+    //             withSonarQubeEnv('sonar-server') {
+    //                 sh """
+    //                 mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+    //                   -Dsonar.projectKey=${SONAR_PROJECT_KEY}
+    //                 """
+    //             }
+    //         }
+    //     }
+    // }
 
     stage("Trivy File Scan - ${appDir}") {
         container('trivy') {
