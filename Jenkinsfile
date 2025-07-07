@@ -63,7 +63,8 @@ pipeline {
                 - name: kaniko-cache
                   emptyDir: {}
                 - name: maven-cache
-                  emptyDir: {}
+                  persistentVolumeClaim:
+                    claimName: maven-cache-pvc
                 - name: gcp-key
                   secret:
                     secretName: gcp-service-account-key
