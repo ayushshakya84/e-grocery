@@ -126,13 +126,22 @@ pipeline {
 }
 
 def runAppStages(appDir, mavenBuildCommand, trivy_file_scan, trivy_image_scan) {
+    
     stage("Package Build - ${appDir}") {
         container('maven') {
-            dir("${appDir}") {
-                sh """
-                echo "Building package for ${appDir} service"
-                ${mavenBuildCommand}
-                """
+            script{
+                dir('lib/') {
+                    sh '''
+                    echo "Installing Dependencies for ${APP_DIR} service"
+                    bash script.sh
+                    '''
+                }
+                dir("${appDir}") {
+                    sh """
+                    echo "Building package for ${appDir} service"
+                    ${mavenBuildCommand}
+                    """
+                }
             }
         }
     }
