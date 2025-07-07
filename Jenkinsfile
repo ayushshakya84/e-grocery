@@ -8,10 +8,12 @@ pipeline {
               serviceAccountName: jenkins
               containers:
               - name: kaniko
-                image: gcr.io/kaniko-project/executor:latest
+                image: gcr.io/kaniko-project/executor:debug
                 tty: true
                 command:
-                - cat
+                - sleep
+                args:
+                - 99d
                 volumeMounts:
                 - name: kaniko-cache
                   mountPath: /cache
@@ -21,7 +23,9 @@ pipeline {
               - name: maven
                 image: maven:3.6.3-jdk-11
                 command:
-                - cat
+                - sleep
+                args:
+                - 99d
                 tty: true
                 volumeMounts:
                 - name: maven-cache
@@ -29,7 +33,9 @@ pipeline {
               - name: gcloud
                 image: gcr.io/google.com/cloudsdktool/google-cloud-cli:latest
                 command:
-                - cat
+                - sleep
+                args:
+                - 99d
                 tty: true
                 volumeMounts:
                 - name: gcp-key
@@ -38,7 +44,9 @@ pipeline {
               - name: trivy
                 image: aquasec/trivy:latest
                 command:
-                - cat
+                - sleep
+                args:
+                - 99d
                 tty: true
                 volumeMounts:
                 - name: gcp-key
@@ -73,7 +81,7 @@ pipeline {
         GIT_REPO_NAME = "e-grocery-k8s-infra"
         GIT_USER_NAME = "ayushshakya84"
         GIT_USER_EMAIL = "ayushshakya8410@gmail.com"
-        GIT_BRANCH = "gcp"
+        GIT_BRANCH = "main"
         UPDATE_DIR = "e-grocery-k8s-infra"
         GOOGLE_APPLICATION_CREDENTIALS = "/secret/gcp-service-account-key.json"
     }
