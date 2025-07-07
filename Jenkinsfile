@@ -7,195 +7,232 @@ pipeline {
             spec:
               serviceAccountName: jenkins
               containers:
-              - name: docker
-                image: ayush8410/docker-aws-trivy:v2
+              - name: kaniko
+                image: gcr.io/kaniko-project/executor:latest
                 tty: true
-                securityContext:
-                  privileged: true
+                command:
+                - cat
+                volumeMounts:
+                - name: kaniko-cache
+                  mountPath: /cache
+                - name: gcp-key
+                  mountPath: /secret
+                  readOnly: true
               - name: maven
-                image: maven:3.6.3-jdk-11
+                image: maven:3.8.8-openjdk-11
                 command:
                 - cat
                 tty: true
+                volumeMounts:
+                - name: maven-cache
+                  mountPath: /root/.m2
+              - name: gcloud
+                image: gcr.io/google.com/cloudsdktool/google-cloud-cli:latest
+                command:
+                - cat
+                tty: true
+                volumeMounts:
+                - name: gcp-key
+                  mountPath: /secret
+                  readOnly: true
+              - name: trivy
+                image: aquasec/trivy:latest
+                command:
+                - cat
+                tty: true
+                volumeMounts:
+                - name: gcp-key
+                  mountPath: /secret
+                  readOnly: true
+              resources:
+                limits:
+                  memory: "2Gi"
+                  cpu: "1"
+                requests:
+                  memory: "1Gi"
+                  cpu: "500m"
+              volumes:
+                - name: kaniko-cache
+                  emptyDir: {}
+                - name: maven-cache
+                  emptyDir: {}
+                - name: gcp-key
+                  secret:
+                    secretName: gcp-service-account-key
             """
         }
     }
-    
-    environment  {
-        SCANNER_HOME=tool 'sonar-scanner'
-        AWS_ACCOUNT_ID = credentials('AWS_ACCOUNT_ID')
-        AWS_DEFAULT_REGION = 'ap-south-1'
-        REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/"
+
+    environment {
+        SCANNER_HOME = tool 'sonar-scanner'
+        GCP_PROJECT_ID = credentials('GCP_PROJECT_ID')
+        GCP_REGION = 'asia-south1'
+        REGISTRY_HOST = 'asia-south1-docker.pkg.dev'
+        REPOSITORY_URI = "${REGISTRY_HOST}/${GCP_PROJECT_ID}/e-grocery-repo"
+        SONAR_PROJECT_KEY = "ayushshakya84_e-grocery-${appDir}_${BUILD_NUMBER}"
+        GIT_REPO_NAME = "e-grocery-k8s-infra"
+        GIT_USER_NAME = "ayushshakya84"
+        GIT_USER_EMAIL = "ayushshakya8410@gmail.com"
+        GIT_BRANCH = "gcp"
+        UPDATE_DIR = "e-grocery-k8s-infra"
+        GOOGLE_APPLICATION_CREDENTIALS = "/secret/gcp-service-account-key.json"
     }
 
-
     stages {
-        stage('Determine App Directory') {
+        stage('Determine App Directories') {
             steps {
                 script {
-                    def changedDirs = sh(script: "git diff --name-only HEAD~1 HEAD", returnStdout: true).trim().tokenize('\n').collect { it.split('/')[0] }.unique()
-                    APP_DIR = changedDirs.find { it in ['gateway', 'notification', 'order', 'ordersaga', 'payment', 'product', 'profile', 'search', 'shipment'] }
-                    env.APP_DIR = APP_DIR // Set the environment variable
-                    env.AWS_ECR_REPO_NAME = "e-grocery/${APP_DIR}" 
-                    echo "Detected application directory: ${APP_DIR}"
-                    echo "${AWS_ECR_REPO_NAME}"
+                    def config = readYaml file: 'config.yaml'
+                    def application = config.application
+                    def changedDirs = sh(script: "git diff --name-only HEAD~1 HEAD", returnStdout: true)
+                                      .trim()
+                                      .tokenize('\n')
+                                      .collect { it.split('/')[0] }
+                                      .unique()
+                                      .findAll { application.contains(it) }
+                    env.CHANGED_DIRS = changedDirs.join(',')
+                    echo "Detected changed directories: ${env.CHANGED_DIRS}"
                 }
             }
         }
 
-        stage('Package Build') {
-            when {
-                expression {
-                    return sh(script: "git diff --name-only HEAD~1 HEAD | grep '^${APP_DIR}/'", returnStatus: true) == 0
-                }
-            }
+        stage('Process Applications') {
             steps {
-                container('maven') {
-                    script {
-                        dir('lib/') {
-                            sh '''
-                            echo "Installing Dependencies for ${APP_DIR} service"
-                            bash script.sh
-                            '''
-                        }
-                        dir("${env.WORKSPACE}/${env.APP_DIR}") {
-                            sh ''' 
-                            echo "Building package for ${APP_DIR} service"
-                            mvn clean package
-                            '''
-                        }
+                script {
+                    def appDirs = env.CHANGED_DIRS.tokenize(',')
+                    def config = readYaml file: 'config.yaml'
+                    def mavenBuildCommand = config.maven.build
+                    def trivy_file_scan = config.trivy.file_scan
+                    def trivy_image_scan = config.trivy.image_scan
+                    if (appDirs.isEmpty()) {
+                        echo "No relevant directories changed. Skipping builds."
+                        return
+                    }
+                    parallel appDirs.collectEntries { appDir ->
+                        ["${appDir} Pipeline": { runAppStages(appDir, mavenBuildCommand, trivy_file_scan, trivy_image_scan) }]
                     }
                 }
             }
         }
-        
-        stage('Sonarqube Analysis') {
-            when {
-                expression {
-                    return sh(script: "git diff --name-only HEAD~1 HEAD | grep '^${APP_DIR}/'", returnStatus: true) == 0
-                }
+    }
+}
+
+def runAppStages(appDir, mavenBuildCommand, trivy_file_scan, trivy_image_scan) {
+    stage("Package Build - ${appDir}") {
+        container('maven') {
+            dir("${appDir}") {
+                sh """
+                echo "Building package for ${appDir} service"
+                ${mavenBuildCommand}
+                """
             }
-            environment {
-                JAVA_HOME = "${tool 'jdk'}"
-                PATH = "${JAVA_HOME}/bin:${env.PATH}"
-            }
-            steps {
-                container('maven') {
-                    dir("${env.WORKSPACE}/${env.APP_DIR}") {
-                        withSonarQubeEnv('sonar-server') {
-                            sh ''' 
-                            mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=ayushshakya84_e-grocery-${APP_DIR}
-                            '''
-                        }
-                    }
+        }
+    }
+
+    stage("SonarQube Analysis - ${appDir}") {
+        container('maven') {
+            dir("${appDir}") {
+                withSonarQubeEnv('sonar-server') {
+                    sh """
+                    mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+                      -Dsonar.projectKey=${SONAR_PROJECT_KEY}
+                    """
                 }
             }
         }
+    }
 
-        stage('Trivy File Scan') {
-            when {
-                expression {
-                    return sh(script: "git diff --name-only HEAD~1 HEAD | grep '^${APP_DIR}/'", returnStatus: true) == 0
-                }
+    stage("Trivy File Scan - ${appDir}") {
+        container('trivy') {
+            dir("${appDir}") {
+                sh """
+                echo "Running Trivy filesystem scan"
+                trivy fs . --format table --output trivy-fs-report.txt || echo "Trivy scan completed with issues"
+                """
+                archiveArtifacts artifacts: '**/trivy*.txt', allowEmptyArchive: true
             }
-            steps {
-                container('docker') {
-                    dir("${env.WORKSPACE}/${env.APP_DIR}") {
-                        sh 'trivy fs . > trivyfs.txt'
-                    }
+        }
+    }
+
+    stage("Docker Image Build & Push - ${appDir}") {
+        container('kaniko') {
+            dir("${appDir}") {
+                script {
+                    def imageTag = "${BUILD_NUMBER}-${env.GIT_COMMIT.take(7)}"
+                    env.IMAGE_TAG = imageTag
+                    
+                    sh """
+                    echo "Building and pushing Docker image for ${appDir} service using Kaniko"
+                    /kaniko/executor \
+                      --context . \
+                      --dockerfile Dockerfile \
+                      --destination ${REPOSITORY_URI}/${appDir}:${imageTag} \
+                      --cache=true \
+                      --cache-dir=/cache \
+                      --skip-tls-verify=false
+                    """
                 }
             }
         }
+    }
 
-        stage("Docker Image Build") {
-            when {
-                expression {
-                    return sh(script: "git diff --name-only HEAD~1 HEAD | grep '^${APP_DIR}/'", returnStatus: true) == 0
-                }
-            }
-            steps {
-                container('docker') {
-                    script {
-                        dir("${env.WORKSPACE}/${env.APP_DIR}") {
-                            sh """ 
-                            echo "Building Image for ${APP_DIR} service"
-                            dockerd &
-                            sleep 2
-                            docker system prune -f
-                            docker container prune -f
-                            docker build -t ${REPOSITORY_URI}${AWS_ECR_REPO_NAME}:${BUILD_NUMBER} .
-                            """
-                        }
-                    }
-                }
+    stage("Trivy Image Scan - ${appDir}") {
+        container('trivy') {
+            dir("${appDir}") {
+                sh """
+                echo "Authenticating with GCP for image scanning"
+                gcloud auth activate-service-account --key-file=\${GOOGLE_APPLICATION_CREDENTIALS}
+                gcloud auth configure-docker \${REGISTRY_HOST}
+                
+                echo "Running Trivy image scan"
+                trivy image ${REPOSITORY_URI}/${appDir}:${IMAGE_TAG} --format table --output trivy-image-report.txt || echo "Image scan completed with issues"
+                """
+                archiveArtifacts artifacts: '**/trivy*.txt', allowEmptyArchive: true
             }
         }
+    }
 
-        stage("TRIVY Image Scan") {
-            when {
-                expression {
-                    return sh(script: "git diff --name-only HEAD~1 HEAD | grep '^${APP_DIR}/'", returnStatus: true) == 0
-                }
-            }
-            steps {
-                container('docker') {
-                    sh 'trivy image ${REPOSITORY_URI}${AWS_ECR_REPO_NAME}:${BUILD_NUMBER} > trivyimage.txt'
-                }
-            }
+    stage("Verify Image Push - ${appDir}") {
+        container('gcloud') {
+            sh """
+            echo "Verifying image push to Google Artifact Registry"
+            gcloud auth activate-service-account --key-file=\${GOOGLE_APPLICATION_CREDENTIALS}
+            gcloud config set project \${GCP_PROJECT_ID}
+            gcloud artifacts docker images list ${REGISTRY_HOST}/${GCP_PROJECT_ID}/e-grocery-repo/${appDir} --limit=5
+            """
         }
+    }
 
-        stage("ECR Image Pushing") {
-            when {
-                expression {
-                    return sh(script: "git diff --name-only HEAD~1 HEAD | grep '^${APP_DIR}/'", returnStatus: true) == 0
-                }
-            }
-            steps {
-                container('docker') {
-                    withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws-cred', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-                        script {
-                            sh """
-                            echo "Pushing Image of ${APP_DIR} service"
-                            aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${REPOSITORY_URI}
-                            docker push ${REPOSITORY_URI}${AWS_ECR_REPO_NAME}:${BUILD_NUMBER}
-                            """
-                        }
-                    }
-                }
-            }
-        }
-
-        stage('Update Deployment file') {
-            when {
-                expression {
-                    return sh(script: "git diff --name-only HEAD~1 HEAD | grep '^${APP_DIR}/'", returnStatus: true) == 0
-                }
-            }
-            environment {
-                GIT_REPO_NAME = "e-grocery-k8s-infra"
-                GIT_USER_NAME = "ayushshakya84"
-                GIT_USER_EMAIL = "ayushshakya8410@gmail.com"
-                GIT_BRANCH = "main"
-            }
-            steps {
-                container('docker') {
-                    cleanWs() 
-                    dir("${env.WORKSPACE}/e-grocery-k8s-infra") {
+    stage("Update Deployment Changes - ${appDir}") {
+        container('gcloud') {
+            script {
+                // Check if the current appDir has changes
+                def hasChanges = sh(
+                    script: "git diff --name-only HEAD~1 HEAD | grep '^${appDir}/' || true",
+                    returnStdout: true
+                ).trim()
+                
+                if (hasChanges) {
+                    cleanWs()
+                    dir("${env.WORKSPACE}/${env.UPDATE_DIR}") {
                         withCredentials([string(credentialsId: 'GIT_TOKEN', variable: 'GITHUB_TOKEN')]) {
-                            git credentialsId: 'GITHUB_CRED', url: 'https://github.com/ayushshakya84/e-grocery-k8s-infra.git', branch: "${env.GIT_BRANCH}"
-                            sh '''         
-                                git config --global --add safe.directory $(pwd)
-                                git config user.email ${GIT_USER_EMAIL}
-                                git config user.name ${GIT_USER_NAME}
-                                BUILD_NUMBER=${BUILD_NUMBER}
-                                echo $BUILD_NUMBER
-                                yq -y -i ".image.tag = \\"${BUILD_NUMBER}\\"" main-app-values/${APP_DIR}/values.yaml
-                                git add main-app-values/${APP_DIR}/values.yaml
-                                git commit -m "Update deployment Image to version \${BUILD_NUMBER}"
-                                git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:${GIT_BRANCH}
-                            '''
+                            sh """
+                            git clone https://\${GITHUB_TOKEN}@github.com/\${GIT_USER_NAME}/\${GIT_REPO_NAME}.git .
+                            git config user.email \${GIT_USER_EMAIL}
+                            git config user.name \${GIT_USER_NAME}
+                            
+                            # Update the image tag in values.yaml
+                            yq -i ".image.tag = \\"\${IMAGE_TAG}\\"" main-app-values/${appDir}/values.yaml
+                            
+                            # Commit and push changes
+                            git add main-app-values/${appDir}/values.yaml
+                            git commit -m "Update ${appDir} deployment image to version \${IMAGE_TAG}"
+                            git push origin \${GIT_BRANCH}
+                            """
                         }
                     }
+                } else {
+                    echo "No changes detected for ${appDir}, skipping deployment update"
                 }
             }
         }
